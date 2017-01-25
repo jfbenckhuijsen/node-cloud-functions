@@ -1,0 +1,17 @@
+{
+  "name": "cloud-functions",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "scripts": {},
+  "dependencies": {
+    "confidence": "^3.0.2",
+    "gstore-node": "^0.9.1",
+    "joi": "^8.0.5",
+    "jsonwebtoken": "^5.7.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.6"
+  }
+}
