@@ -13,10 +13,18 @@ describe('Path controller', () => {
     const OPTIONS = {
         paths: [
             {
+                method: 'GET',
+                path: '/',
+                auth: false,
+                requestHandler: function(req, res) {
+
+                }
+            },
+            {
                 method: 'PUT',
                 path: '/user',
                 auth: false,
-                handler: function(req, res) {
+                requestHandler: function(req, res) {
 
                 }
             },
@@ -24,7 +32,7 @@ describe('Path controller', () => {
                 method: 'GET',
                 path: '/user/login',
                 auth: false,
-                handler: function(req, res) {
+                requestHandler: function(req, res) {
 
                 }
             },
@@ -32,7 +40,7 @@ describe('Path controller', () => {
                 method: 'POST',
                 path: '/user/login',
                 auth: false,
-                handler: function(req, res) {
+                requestHandler: function(req, res) {
 
                 }
             },
@@ -40,7 +48,7 @@ describe('Path controller', () => {
                 method: 'GET',
                 path: '/user/{id}',
                 auth: true,
-                handler: function(req, res) {
+                requestHandler: function(req, res) {
 
                 }
             },
@@ -48,7 +56,7 @@ describe('Path controller', () => {
                 method: 'POST',
                 path: '/user/{id}/{username}',
                 auth: false,
-                handler: function(req, res) {
+                requestHandler: function(req, res) {
                     res.status(200).send(req.params);
                 }
             },
@@ -56,7 +64,7 @@ describe('Path controller', () => {
                 method: 'GET',
                 path: '/user/duplicate',
                 auth: false,
-                handler: function(req, res) {
+                requestHandler: function(req, res) {
 
                 }
             },
@@ -64,7 +72,7 @@ describe('Path controller', () => {
                 method: 'GET',
                 path: '/user/duplicate',
                 auth: false,
-                handler: function(req, res) {
+                requestHandler: function(req, res) {
 
                 }
             },
@@ -95,6 +103,32 @@ describe('Path controller', () => {
             expect(apiRequest).to.be.null
         });
 
+        it('should find the API based on a request for the root path (empty string)', () => {
+            var controller = new PathController(OPTIONS);
+
+            var apiRequest = controller.toApiRequest({
+                path: '',
+                method: 'GET'
+            });
+
+            expect(apiRequest).to.not.be.null
+            expect(apiRequest.params).to.be.empty;
+            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[0]);
+        });
+
+        it('should find the API based on a request for the root path (null)', () => {
+            var controller = new PathController(OPTIONS);
+
+            var apiRequest = controller.toApiRequest({
+                path: null,
+                method: 'GET'
+            });
+
+            expect(apiRequest).to.not.be.null
+            expect(apiRequest.params).to.be.empty;
+            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[0]);
+        });
+
         it('should find the API based on a request with a single level path', () => {
             var controller = new PathController(OPTIONS);
 
@@ -105,7 +139,7 @@ describe('Path controller', () => {
 
             expect(apiRequest).to.not.be.null
             expect(apiRequest.params).to.be.empty;
-            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[0]);
+            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[1]);
         });
 
         it('should find the API based on a request with a multi level path', () => {
@@ -118,7 +152,7 @@ describe('Path controller', () => {
 
             expect(apiRequest).to.not.be.null
             expect(apiRequest.params).to.be.empty;
-            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[1]);
+            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[2]);
         });
 
         it('should find the API based on a request with a duplicate', () => {
@@ -144,7 +178,7 @@ describe('Path controller', () => {
             expect(apiRequest.params).to.deep.equal({
                 id: '12345'
             });
-            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[3]);
+            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[4]);
         });
 
         it('should find the API based on a request with multiple parameters', () => {
@@ -160,7 +194,7 @@ describe('Path controller', () => {
                 id: '12345',
                 username: 'abcdef'
             });
-            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[4]);
+            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[5]);
         });
     });
 
