@@ -1,0 +1,8 @@
+{
+  "name": "cloud-functions-service-hello-world",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "node-cloud-functions": "git+https://github.com/jfbenckhuijsen/node-cloud-functions.git"
+  }
+}
