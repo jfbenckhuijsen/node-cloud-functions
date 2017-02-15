@@ -5,6 +5,7 @@
   "scripts": {},
   "dependencies": {
     "confidence": "^3.0.2",
+    "cors": "^2.8.1",
     "gstore-node": "^0.9.1",
     "joi": "^8.0.5",
     "jsonwebtoken": "^5.7.0"

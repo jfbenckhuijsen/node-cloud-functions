@@ -15,7 +15,6 @@ describe('Path controller', () => {
             {
                 method: 'GET',
                 path: '/',
-                auth: false,
                 requestHandler: function(req, res) {
 
                 }
@@ -23,7 +22,6 @@ describe('Path controller', () => {
             {
                 method: 'PUT',
                 path: '/user',
-                auth: false,
                 requestHandler: function(req, res) {
 
                 }
@@ -31,7 +29,6 @@ describe('Path controller', () => {
             {
                 method: 'GET',
                 path: '/user/login',
-                auth: false,
                 requestHandler: function(req, res) {
 
                 }
@@ -39,7 +36,6 @@ describe('Path controller', () => {
             {
                 method: 'POST',
                 path: '/user/login',
-                auth: false,
                 requestHandler: function(req, res) {
 
                 }
@@ -47,7 +43,6 @@ describe('Path controller', () => {
             {
                 method: 'GET',
                 path: '/user/{id}',
-                auth: true,
                 requestHandler: function(req, res) {
 
                 }
@@ -55,7 +50,6 @@ describe('Path controller', () => {
             {
                 method: 'POST',
                 path: '/user/{id}/{username}',
-                auth: false,
                 requestHandler: function(req, res) {
                     res.status(200).send(req.params);
                 }
@@ -63,7 +57,6 @@ describe('Path controller', () => {
             {
                 method: 'GET',
                 path: '/user/duplicate',
-                auth: false,
                 requestHandler: function(req, res) {
 
                 }
@@ -71,11 +64,18 @@ describe('Path controller', () => {
             {
                 method: 'GET',
                 path: '/user/duplicate',
-                auth: false,
                 requestHandler: function(req, res) {
 
                 }
             },
+            {
+                method: 'GET',
+                path: '/user/cors',
+                auth: false,
+                cors: true,
+                requestHandler: function(req, res) {
+                }
+            }
 
         ]
     };
@@ -236,6 +236,47 @@ describe('Path controller', () => {
                 id : "12345",
                 username: 'abcdef'
             })).to.equal(true);
+        });
+    });
+
+    describe('--> cors based requests', () => {
+        it("should answer to a CORS options request", () => {
+            var controller = new PathController(OPTIONS);
+
+            var res = {};
+
+            res.setHeader = sinon.stub();
+            res.end = sinon.stub();
+
+            controller.executeRequest({
+                path: '/user/cors',
+                method: 'OPTIONS',
+                headers : {
+                    origin : 'http://localhost:8080'
+                }
+            }, res, null);
+
+            expect(res.statusCode).to.equal(204);
+            expect(res.setHeader.calledWith('Access-Control-Allow-Origin', '*')).to.equal(true);
+            expect(res.end.calledWith());
+        });
+
+        it("should add CORS headers to a regular request", () => {
+            var controller = new PathController(OPTIONS);
+
+            var res = {};
+
+            res.setHeader = sinon.stub();
+
+            controller.executeRequest({
+                path: '/user/cors',
+                method: 'GET',
+                headers : {
+                    origin : 'http://localhost:8080'
+                }
+            }, res, null);
+
+            expect(res.setHeader.calledWith('Access-Control-Allow-Origin', '*')).to.equal(true);
         });
     });
 });
