@@ -4,8 +4,6 @@ var chai       = require('chai');
 var sinon      = require('sinon');
 var expect     = chai.expect;
 
-// TODO: CORS requests
-
 describe('Path controller', () => {
 
     var PathController = require('../lib/path_controller');
@@ -113,7 +111,15 @@ describe('Path controller', () => {
 
             expect(apiRequest).to.not.be.null
             expect(apiRequest.params).to.be.empty;
-            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[0]);
+            expect(apiRequest.api).to.deep.equal({
+                "requestHandler": OPTIONS.paths[0].requestHandler,
+                "method": [
+                    "GET"
+                ],
+                "path": "/",
+                "schema": undefined,
+                "use": []
+            });
         });
 
         it('should find the API based on a request for the root path (null)', () => {
@@ -126,7 +132,15 @@ describe('Path controller', () => {
 
             expect(apiRequest).to.not.be.null
             expect(apiRequest.params).to.be.empty;
-            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[0]);
+            expect(apiRequest.api).to.deep.equal({
+                "requestHandler": OPTIONS.paths[0].requestHandler,
+                "method": [
+                    "GET"
+                ],
+                "path": "/",
+                "schema": undefined,
+                "use": []
+            });
         });
 
         it('should find the API based on a request with a single level path', () => {
@@ -139,7 +153,15 @@ describe('Path controller', () => {
 
             expect(apiRequest).to.not.be.null
             expect(apiRequest.params).to.be.empty;
-            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[1]);
+            expect(apiRequest.api).to.deep.equal({
+                "requestHandler": OPTIONS.paths[1].requestHandler,
+                "method": [
+                    "PUT"
+                ],
+                "path": "/user",
+                "schema": undefined,
+                "use": []
+            });
         });
 
         it('should find the API based on a request with a multi level path', () => {
@@ -152,7 +174,15 @@ describe('Path controller', () => {
 
             expect(apiRequest).to.not.be.null
             expect(apiRequest.params).to.be.empty;
-            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[2]);
+            expect(apiRequest.api).to.deep.equal({
+                "requestHandler": OPTIONS.paths[2].requestHandler,
+                "method": [
+                    "GET"
+                ],
+                "path": "/user/login",
+                "schema": undefined,
+                "use": []
+            });
         });
 
         it('should find the API based on a request with a duplicate', () => {
@@ -178,7 +208,15 @@ describe('Path controller', () => {
             expect(apiRequest.params).to.deep.equal({
                 id: '12345'
             });
-            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[4]);
+            expect(apiRequest.api).to.deep.equal({
+                "requestHandler": OPTIONS.paths[4].requestHandler,
+                "method": [
+                    "GET"
+                ],
+                "path": "/user/{id}",
+                "schema": undefined,
+                "use": []
+            });
         });
 
         it('should find the API based on a request with multiple parameters', () => {
@@ -194,7 +232,15 @@ describe('Path controller', () => {
                 id: '12345',
                 username: 'abcdef'
             });
-            expect(apiRequest.api).to.deep.equal(OPTIONS.paths[5]);
+            expect(apiRequest.api).to.deep.equal({
+                "requestHandler": OPTIONS.paths[5].requestHandler,
+                "method": [
+                    "POST"
+                ],
+                "path": "/user/{id}/{username}",
+                "schema": undefined,
+                "use": []
+            });
         });
     });
 
