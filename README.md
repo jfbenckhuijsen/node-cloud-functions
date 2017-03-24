@@ -78,6 +78,7 @@ The format of the configuration file is as follows:
 
 #### Logging support
 
+
 TODO:!!!!!! --> Document
 
 #### Google Datastore support
@@ -118,7 +119,8 @@ module.exports = CloudFunctions.restServiceModule({
                 // res is the base Express.js compatible Response object
                 // responseCallback is a function(result, err). result is send using HTTP 200, in case err !== undefined,
                 //                  and err is a Boom object, this is used to return the results, else a HTTP 500 is used
-                //                  and err is JSON.stringified as response payload.
+                //                  and err is JSON.stringified as response payload. The same can be achieved using 
+                //                  res.handle().
             },
             
             // Extended options
@@ -133,8 +135,19 @@ module.exports = CloudFunctions.restServiceModule({
 
 #### Specifying paths and methods
 
-TODO:!!!!!! --> Document
+The basic configuration needed for a REST service module is to specify the paths and the methods (HTTP verbs) which should
+be handled by the REST service. This configuration is done by passing a configuration object to the `restServiceModule()`
+function, which has a paths field in the configuration object, as can been seen above.
 
+The paths field should contain an array of Path objects, each specifying a method/path combination which should be handled
+by the service. There are three required parts of this definition:
+* `method`: Specifying a single HTTP Verb name (uppercase) or an array of names
+* `path`: Specifying the path. The path can be specified using 
+* `handler`: a function taking 4 arguments:
+  * LOGGER: A logging object to support logging messages. See [Logging Support]()
+  * req: the base Express.js compatible Request object.
+  * res: the base Express.js compatbile Response object
+  * responseCallback: a function (result, err), which can be called to automatically send the result.
 
 #### Error handling support
 
