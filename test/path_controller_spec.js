@@ -48,6 +48,13 @@ describe('Path controller', () => {
             },
             {
                 method: 'POST',
+                path: '/user/{id}',
+                requestHandler: function(req, res) {
+
+                }
+            },
+            {
+                method: 'POST',
                 path: '/user/{id}/{username}',
                 requestHandler: function(req, res) {
                     res.status(200).send(req.params);
@@ -234,7 +241,7 @@ describe('Path controller', () => {
                 username: 'abcdef'
             });
             expect(apiRequest.api).to.deep.equal({
-                "requestHandler": OPTIONS.paths[5].requestHandler,
+                "requestHandler": OPTIONS.paths[6].requestHandler,
                 "method": [
                     "POST"
                 ],

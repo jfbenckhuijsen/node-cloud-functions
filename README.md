@@ -106,7 +106,8 @@ const CloudFunctions = require('cloud-functions')(configFile, configTreePath);
 module.exports = CloudFunctions.restServiceModule({
     name: 'REQUIRED: Name of the service module',
     use: "Array of Express/Connect compatbile middleware executed on all paths (see Middleware support below)",
-    enableCors: 'Boolean: enables support for CORS on all paths. See CORS support'
+    enableCors: 'Boolean: enables support for CORS on all paths. See CORS support',
+    debug: 'Boolean: enables a specific path /_paths to show the set of configured paths',
     paths : [
         // Specification of the various paths
         {
