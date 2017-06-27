@@ -9,7 +9,7 @@
     "chalk": "^1.1.3",
     "confidence": "^3.0.2",
     "cors": "^2.8.1",
-    "gstore-node": "^0.9.1",
+    "gstore-node": "^1.3.0",
     "joi": "^8.0.5",
     "jsonwebtoken": "^5.7.0"
   },
