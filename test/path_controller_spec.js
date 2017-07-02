@@ -14,72 +14,100 @@ describe('Path controller', () => {
             {
                 method: 'GET',
                 path: '/',
-                requestHandler: function(req, res) {
+                requestHandler: (req, res) => {
 
                 }
             },
             {
                 method: 'PUT',
                 path: '/user',
-                requestHandler: function(req, res) {
+                requestHandler: (req, res) => {
 
                 }
             },
             {
                 method: 'GET',
                 path: '/user/login',
-                requestHandler: function(req, res) {
+                requestHandler: (req, res) => {
 
                 }
             },
             {
                 method: 'POST',
                 path: '/user/login',
-                requestHandler: function(req, res) {
+                requestHandler: (req, res) => {
 
                 }
             },
             {
                 method: 'GET',
                 path: '/user/{id}',
-                requestHandler: function(req, res) {
+                requestHandler: (req, res) => {
 
                 }
             },
             {
                 method: 'POST',
                 path: '/user/{id}',
-                requestHandler: function(req, res) {
+                requestHandler: (req, res) => {
 
                 }
             },
             {
                 method: 'POST',
                 path: '/user/{id}/{username}',
-                requestHandler: function(req, res) {
+                requestHandler: (req, res) => {
                     res.status(200).send(req.params);
                 }
             },
             {
                 method: 'GET',
                 path: '/user/duplicate',
-                requestHandler: function(req, res) {
+                requestHandler: (req, res) => {
 
                 }
             },
             {
                 method: 'GET',
                 path: '/user/duplicate',
-                requestHandler: function(req, res) {
+                requestHandler: (req, res) => {
 
                 }
             },
             {
                 method: 'GET',
                 path: '/user/cors',
-                auth: false,
                 cors: true,
-                requestHandler: function(req, res) {
+                requestHandler: (req, res) => {
+                }
+            },
+            {
+                method: 'GET',
+                path: '/user/cors/uniquemethod',
+                cors: true,
+                requestHandler: (req, res) => {
+                }
+            },
+            {
+                method: 'POST',
+                path: '/user/cors/uniquemethod',
+                cors: true,
+                requestHandler: (req, res) => {
+                }
+            },
+            {
+                method: 'GET',
+                path: '/user/noncors/uniquemethod',
+                cors: false,
+                requestHandler: (req, res) => {
+                }
+            },
+            {
+                method: 'OPTIONS',
+                path: '/user/noncors/uniquemethod',
+                cors: false,
+                requestHandler: (req, res) => {
+                    res.status(200).end();
                 }
             }
 
@@ -88,9 +116,9 @@ describe('Path controller', () => {
 
     describe('--> toApiRequest', () => {
         it('should find the API based on a request with a unknown path', () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var apiRequest = controller.toApiRequest({
+            let apiRequest = controller.toApiRequest({
                 path: '/posts',
                 method: 'GET'
             });
@@ -99,9 +127,9 @@ describe('Path controller', () => {
         });
 
         it('should find the API based on a request with a unknown method', () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var apiRequest = controller.toApiRequest({
+            let apiRequest = controller.toApiRequest({
                 path: '/user',
                 method: 'POST'
             });
@@ -110,9 +138,9 @@ describe('Path controller', () => {
         });
 
         it('should find the API based on a request for the root path (empty string)', () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var apiRequest = controller.toApiRequest({
+            let apiRequest = controller.toApiRequest({
                 path: '',
                 method: 'GET'
             });
@@ -126,14 +154,15 @@ describe('Path controller', () => {
                 ],
                 "path": "/",
                 "schema": undefined,
-                "use": []
+                "use": [controller.defaultErrorHandler],
+                cors: undefined
             });
         });
 
         it('should find the API based on a request for the root path (null)', () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var apiRequest = controller.toApiRequest({
+            let apiRequest = controller.toApiRequest({
                 path: null,
                 method: 'GET'
             });
@@ -147,14 +176,15 @@ describe('Path controller', () => {
                 ],
                 "path": "/",
                 "schema": undefined,
-                "use": []
+                "use": [controller.defaultErrorHandler],
+                cors: undefined
             });
         });
 
         it('should find the API based on a request with a single level path', () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var apiRequest = controller.toApiRequest({
+            let apiRequest = controller.toApiRequest({
                 path: '/user',
                 method: 'PUT'
             });
@@ -168,14 +198,15 @@ describe('Path controller', () => {
                 ],
                 "path": "/user",
                 "schema": undefined,
-                "use": []
+                "use": [controller.defaultErrorHandler],
+                cors: undefined
             });
         });
 
         it('should find the API based on a request with a multi level path', () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var apiRequest = controller.toApiRequest({
+            let apiRequest = controller.toApiRequest({
                 path: '/user/login',
                 method: 'GET'
             });
@@ -189,15 +220,16 @@ describe('Path controller', () => {
                 ],
                 "path": "/user/login",
                 "schema": undefined,
-                "use": []
+                "use": [controller.defaultErrorHandler],
+                cors: undefined
             });
         });
 
         it('should find the API based on a request with a duplicate', () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
             expect(() => {
-                var apiRequest = controller.toApiRequest({
+                let apiRequest = controller.toApiRequest({
                     path: '/user/duplicate',
                     method: 'GET'
                 });
@@ -205,9 +237,9 @@ describe('Path controller', () => {
         });
 
         it('should find the API based on a request with a single parameter', () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var apiRequest = controller.toApiRequest({
+            let apiRequest = controller.toApiRequest({
                 path: '/user/12345',
                 method: 'GET'
             });
@@ -223,14 +255,15 @@ describe('Path controller', () => {
                 ],
                 "path": "/user/{id}",
                 "schema": undefined,
-                "use": []
+                "use": [controller.defaultErrorHandler],
+                cors: undefined
             });
         });
 
         it('should find the API based on a request with multiple parameters', () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var apiRequest = controller.toApiRequest({
+            let apiRequest = controller.toApiRequest({
                 path: '/user/12345/abcdef',
                 method: 'POST'
             });
@@ -247,16 +280,17 @@ describe('Path controller', () => {
                 ],
                 "path": "/user/{id}/{username}",
                 "schema": undefined,
-                "use": []
+                "use": [controller.defaultErrorHandler],
+                cors: undefined
             });
         });
     });
 
     describe('--> executeRequest', () => {
         it('should return status 404 in case the request cannot be found', () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var res = {};
+            let res = {};
 
             res.status = sinon.stub().returns(res);
             res.send = sinon.spy();
@@ -272,9 +306,9 @@ describe('Path controller', () => {
         });
 
         it('should call the handler on an unauthenticated request', () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var res = {};
+            let res = {};
 
             res.status = sinon.stub().returns(res);
             res.send = sinon.stub();
@@ -295,18 +329,21 @@ describe('Path controller', () => {
 
     describe('--> cors based requests', () => {
         it("should answer to a CORS options request", () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var res = {};
+            let res = {};
 
-            res.setHeader = sinon.stub();
+            res.setHeader = sinon.stub().returns(res);
+            res.getHeader = sinon.stub();
+            res.status = sinon.stub().returns(res);
             res.end = sinon.stub();
 
             controller.executeRequest({
                 path: '/user/cors',
                 method: 'OPTIONS',
                 headers : {
-                    origin : 'http://localhost:8080'
+                    origin : 'http://localhost:8080',
+                    'access-control-request-method': 'GET'
                 }
             }, res, null);
 
@@ -316,11 +353,13 @@ describe('Path controller', () => {
         });
 
         it("should add CORS headers to a regular request", () => {
-            var controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS);
 
-            var res = {};
+            let res = {};
 
             res.setHeader = sinon.stub();
+            res.getHeader = sinon.stub();
+            res.status = sinon.stub().returns(res);
 
             controller.executeRequest({
                 path: '/user/cors',
@@ -332,5 +371,55 @@ describe('Path controller', () => {
 
             expect(res.setHeader.calledWith('Access-Control-Allow-Origin', '*')).to.equal(true);
         });
+
+        it("should handle cors OPTIONS requests to paths where only the method differs", () => {
+            const controller = new PathController(OPTIONS);
+
+            let res = {};
+
+            res.setHeader = sinon.stub();
+            res.getHeader = sinon.stub();
+            res.status = sinon.stub().returns(res);
+            res.end = sinon.stub();
+
+            controller.executeRequest({
+                path: '/user/cors/uniquemethod',
+                method: 'OPTIONS',
+                headers : {
+                    origin : 'http://localhost:8080',
+                    'access-control-request-method': 'GET'
+                }
+            }, res, null);
+
+            expect(res.statusCode).to.equal(204);
+            expect(res.setHeader.calledWith('Access-Control-Allow-Origin', '*')).to.equal(true);
+            expect(res.end.calledWith());
+        });
+
+        it("should handle non-cors OPTIONS requests to paths where only the method differs", () => {
+            const controller = new PathController(OPTIONS);
+
+            let res = {};
+
+            res.setHeader = sinon.stub();
+            res.getHeader = sinon.stub();
+            res.status = sinon.stub().returns(res);
+            res.end = sinon.stub();
+
+            controller.executeRequest({
+                path: '/user/noncors/uniquemethod',
+                method: 'OPTIONS',
+                headers : {
+                    origin : 'http://localhost:8080'
+                }
+            }, res, null);
+
+            expect(res.status.calledWith(200));
+            expect(res.end.calledWith());
+        })
+
     });
+
+    // TODO: Add test for default error handler
+    // TODO: Add test for auth
 });
