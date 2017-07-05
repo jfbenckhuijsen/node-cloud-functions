@@ -1,6 +1,6 @@
 "use strict";
 
-const CloudFunctions = require('cloud-functions')(__dirname + '/config.json', '');
+const CloudFunctions = require('../../lib/index.js')(__dirname + '/config.json', '');
 
 module.exports = CloudFunctions.restServiceModule({
     name: 'http_service_paths',

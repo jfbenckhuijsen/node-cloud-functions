@@ -1,0 +1,11 @@
+{
+  "name": "cloud-functions-service-hello-world",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "base-64": "^0.1.0",
+    "node-cloud-functions": "git+https://github.com/jfbenckhuijsen/node-cloud-functions.git"
+    "passport": "^0.3.2"
+    "passport-http": "^0.3.0"
+  }
+}
