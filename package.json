@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "lib/index.js",
   "scripts": {
-    "test" : "mocha test"
+    "test": "mocha test"
   },
   "dependencies": {
     "argparse": "^1.0.9",
@@ -12,11 +12,14 @@
     "confidence": "^3.0.2",
     "cors": "^2.8.1",
     "gstore-node": "^1.3.0",
-    "joi": "^8.0.5"
+    "joi": "^8.0.5",
+    "passport": "^0.3.2"
   },
   "devDependencies": {
+    "base-64": "^0.1.0",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
+    "passport-http": "^0.3.0",
     "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0"
   },

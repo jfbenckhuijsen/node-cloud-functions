@@ -106,8 +106,14 @@ const CloudFunctions = require('cloud-functions')(configFile, configTreePath);
 module.exports = CloudFunctions.restServiceModule({
     name: 'REQUIRED: Name of the service module',
     use: "Array of Express/Connect compatbile middleware executed on all paths (see Middleware support below)",
-    enableCors: 'Boolean: enables support for CORS on all paths. See CORS support',
+    cors: 'Boolean: enables support for CORS on all paths. See CORS support',
     debug: 'Boolean: enables a specific path /_paths to show the set of configured paths',
+    authStrategies: { // Optional, enables authentication
+        default: passport.authenticate() // The default passport strategy to use
+        [other name]: passport.authenticate() // Alternative strategies
+    },
+    auth: false,//'Boolean' or 'String': enables or disables global authentication. In case of a boolean, this refers to the default
+     // authentication strategy. In case of a string, this refers to the name of the strategy.
     paths : [
         // Specification of the various paths
         {
@@ -128,9 +134,11 @@ module.exports = CloudFunctions.restServiceModule({
             use: ["Array of Connect/ExpressJS compatible middleware functions, see Middleware support"],
             cors: "Whether to enable or disable CORS for this path. See CORS support",
             schema: "Validation of JSON based payloads. See Payload validation",
+            auth: false //'Boolean' or 'String': enables or disables global authentication. In case of a boolean, this refers to the default
+                 // authentication strategy. In case of a string, this refers to the name of the strategy.
+
         }
-    ] 
-    // Specification of the service 
+    ]
 });
 ```
 
@@ -166,14 +174,20 @@ CloudFunctions has support for Express/Connect based middleware. Middleware can 
 Given the extended configuration needed and the fact that this type of middleware is often used in various services
 CloudFunctions has support for the following standard middleware:
 * CORS using [Node cors](https://github.com/expressjs/cors).
+* Authentication using [Passport](http://passportjs.org/)
 
-> Note: Only regular middleware is supported at the moment, not error-handling middleware. Also, not all available
-middleware has been tested, so you may run into bugs. In this case, feel free to file a bug.
+> Note: Not all available middleware has been tested, so you may run into bugs. In this case, feel free to file a bug.
 
 #### CORS Support
 
-TODO:!!!!!! --> Document
+The framework has support for [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) by default and can be 
+enabled for various paths or globally. To enable CORS support globally, use the `cors: true` setting at the toplevel
+path specification. Per path this can be overridden using the `cors: boolean` setting.
 
+Whenever CORS is enabled, the framework will automatically:
+* Enable [Node cors](https://github.com/expressjs/cors) as middleware
+* Take CORS into account for path resolution in case there are multiple paths which differ by HTTP method only based on 
+the HTTP Header `"access-control-request-method"`
 
 #### Payload validation
 
@@ -204,5 +218,45 @@ object is automatically wrapped in a `Joi.object().keys()` for validation:
 
 #### Authentication
 
-TODO:!!!!!! --> Document
+Authentication is based on [Passport](http://passportjs.org/). To configure authentication, the following steps are required:
 
+1) Configure at least one Passport authentication strategy to use. Normally if you have only one strategy, this will be 
+ the default strategy.
+2) Enable authentication globally or on a per path basis. A path specific configuration overrides the global configuration. 
+    * In case authentication is enabled, the required call to `passport.initialize()` is automatically added as the 
+     *first* middleware configured for this route. 
+    * Configuring authentication on a path can be done using a simple boolean. In this case the default strategy is used
+     for authentication
+    * Configurating authentication on a path can also be done using a string. In this case, it refers to the name of the
+    strategy in the `authStrategies` object.
+
+Example using JWT:
+```js
+
+// Configure the strategy
+const passport = require('passport');
+const JwtStrategy = require('passport-jwt').Strategy,
+    ExtractJwt = require('passport-jwt').ExtractJwt;
+
+let JWT_OPTS = {};
+JWT_OPTS.jwtFromRequest = ExtractJwt.fromAuthHeader();
+JWT_OPTS.secretOrKey = 'very very secret';
+JWT_OPTS.issuer = '...';
+
+passport.use(new JwtStrategy(JWT_OPTS, (jwt_payload, done) => {
+    return done(null, jwt_payload);
+}));
+
+// Service configuration
+module.exports = CloudFunctions.restServiceModule({
+    name: 'kantoordag-tracker',
+    cors: true,
+    debug: true,
+    authStrategies: {
+        default: passport.authenticate('jwt', {session: false})
+    },
+    paths: [
+        
+    ]
+}
+```

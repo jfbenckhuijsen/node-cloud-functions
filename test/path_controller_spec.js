@@ -1,16 +1,33 @@
 "use strict";
 
-var chai       = require('chai');
-var sinon      = require('sinon');
-var sinonChai  = require("sinon-chai");
-var expect     = chai.expect;
+const chai          = require('chai');
+const sinon         = require('sinon');
+const expect        = chai.expect;
+const passport      = require('passport');
+const BasicStrategy = require('passport-http').BasicStrategy;
+const base64        = require('base-64');
+
+passport.use(new BasicStrategy(
+    function(username, password, done) {
+        if (username == "admin" && password == "welcome") {
+            return done(null, {
+                user: "admin"
+            });
+        } else {
+            return done(null, false);
+        }
+    }
+));
 
 describe('Path controller', () => {
 
-    var PathController = require('../lib/path_controller');
+    let PathController = require('../lib/path_controller');
 
     const OPTIONS = {
         paths: [
+            /**
+             * Regular paths
+             */
             {
                 method: 'GET',
                 path: '/',
@@ -76,6 +93,19 @@ describe('Path controller', () => {
             },
             {
                 method: 'GET',
+                path: '/user/errorhandler',
+                use: (req, res, next) => {
+                    next(new Error("Some error has occurred"));
+                },
+                requestHandler: (req, res) => {
+
+                }
+            },
+            /**
+             * CORS support paths
+             */
+            {
+                method: 'GET',
                 path: '/user/cors',
                 cors: true,
                 requestHandler: (req, res) => {
@@ -102,6 +132,9 @@ describe('Path controller', () => {
                 requestHandler: (req, res) => {
                 }
             },
+            /**
+             * Authentication support paths
+             */
             {
                 method: 'OPTIONS',
                 path: '/user/noncors/uniquemethod',
@@ -109,9 +142,21 @@ describe('Path controller', () => {
                 requestHandler: (req, res) => {
                     res.status(200).end();
                 }
+            },
+            {
+                method: 'GET',
+                path: '/user/authenticated',
+                cors: false,
+                auth: true,
+                requestHandler: (req, res) => {
+                    res.status(200).end();
+                }
             }
 
-        ]
+        ],
+        authStrategies : {
+            default: passport.authenticate('basic')
+        }
     };
 
     describe('--> toApiRequest', () => {
@@ -145,7 +190,7 @@ describe('Path controller', () => {
                 method: 'GET'
             });
 
-            expect(apiRequest).to.not.be.null
+            expect(apiRequest).to.not.be.null;
             expect(apiRequest.params).to.be.empty;
             expect(apiRequest.api).to.deep.equal({
                 "requestHandler": OPTIONS.paths[0].requestHandler,
@@ -167,7 +212,7 @@ describe('Path controller', () => {
                 method: 'GET'
             });
 
-            expect(apiRequest).to.not.be.null
+            expect(apiRequest).to.not.be.null;
             expect(apiRequest.params).to.be.empty;
             expect(apiRequest.api).to.deep.equal({
                 "requestHandler": OPTIONS.paths[0].requestHandler,
@@ -189,7 +234,7 @@ describe('Path controller', () => {
                 method: 'PUT'
             });
 
-            expect(apiRequest).to.not.be.null
+            expect(apiRequest).to.not.be.null;
             expect(apiRequest.params).to.be.empty;
             expect(apiRequest.api).to.deep.equal({
                 "requestHandler": OPTIONS.paths[1].requestHandler,
@@ -211,7 +256,7 @@ describe('Path controller', () => {
                 method: 'GET'
             });
 
-            expect(apiRequest).to.not.be.null
+            expect(apiRequest).to.not.be.null;
             expect(apiRequest.params).to.be.empty;
             expect(apiRequest.api).to.deep.equal({
                 "requestHandler": OPTIONS.paths[2].requestHandler,
@@ -229,7 +274,7 @@ describe('Path controller', () => {
             const controller = new PathController(OPTIONS);
 
             expect(() => {
-                let apiRequest = controller.toApiRequest({
+                controller.toApiRequest({
                     path: '/user/duplicate',
                     method: 'GET'
                 });
@@ -244,7 +289,7 @@ describe('Path controller', () => {
                 method: 'GET'
             });
 
-            expect(apiRequest).to.not.be.null
+            expect(apiRequest).to.not.be.null;
             expect(apiRequest.params).to.deep.equal({
                 id: '12345'
             });
@@ -268,7 +313,7 @@ describe('Path controller', () => {
                 method: 'POST'
             });
 
-            expect(apiRequest).to.not.be.null
+            expect(apiRequest).to.not.be.null;
             expect(apiRequest.params).to.deep.equal({
                 id: '12345',
                 username: 'abcdef'
@@ -305,7 +350,7 @@ describe('Path controller', () => {
             expect(res.send.called).to.equal(true);
         });
 
-        it('should call the handler on an unauthenticated request', () => {
+        it('should call the handler on a request', () => {
             const controller = new PathController(OPTIONS);
 
             let res = {};
@@ -324,6 +369,23 @@ describe('Path controller', () => {
                 id : "12345",
                 username: 'abcdef'
             })).to.equal(true);
+        });
+
+        it('should call the default error handler on middleware error', () => {
+            const controller = new PathController(OPTIONS);
+
+            let res = {};
+
+            res.status = sinon.stub().returns(res);
+            res.send = sinon.stub();
+
+            controller.executeRequest({
+                path: '/user/errorhandler',
+                method: 'GET'
+            }, res, null);
+
+
+            expect(res.status.calledWith(500)).to.equal(true);
         });
     });
 
@@ -420,6 +482,50 @@ describe('Path controller', () => {
 
     });
 
-    // TODO: Add test for default error handler
-    // TODO: Add test for auth
+    describe('--> authenticated requests', () => {
+        it("should handle authentication - success", () => {
+            const controller = new PathController(OPTIONS);
+
+            let res = {};
+
+            res.setHeader = sinon.stub();
+            res.getHeader = sinon.stub();
+            res.status = sinon.stub().returns(res);
+            res.end = sinon.stub();
+
+            controller.executeRequest({
+                path: '/user/authenticated',
+                method: 'GET',
+                headers : {
+                    authorization: base64.encode("admin:welcome")
+
+                }
+            }, res, null);
+
+            expect(res.status.calledWith(200));
+            expect(res.end.calledWith());
+        });
+
+        it("should handle authentication - failed", () => {
+            const controller = new PathController(OPTIONS);
+
+            let res = {};
+
+            res.setHeader = sinon.stub();
+            res.getHeader = sinon.stub();
+            res.status = sinon.stub().returns(res);
+            res.end = sinon.stub();
+
+            controller.executeRequest({
+                path: '/user/authenticated',
+                method: 'GET',
+                headers : {
+                    authorization: base64.encode("admin:notwelcome")
+                }
+            }, res, null);
+
+            expect(res.status.calledWith(401));
+            expect(res.end.calledWith());
+        });
+    })
 });
