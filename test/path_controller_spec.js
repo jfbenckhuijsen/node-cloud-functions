@@ -199,8 +199,7 @@ describe('Path controller', () => {
                 ],
                 "path": "/",
                 "schema": undefined,
-                "use": [controller.defaultErrorHandler],
-                cors: undefined
+                "use": [controller.defaultErrorHandler]
             });
         });
 
@@ -221,8 +220,7 @@ describe('Path controller', () => {
                 ],
                 "path": "/",
                 "schema": undefined,
-                "use": [controller.defaultErrorHandler],
-                cors: undefined
+                "use": [controller.defaultErrorHandler]
             });
         });
 
@@ -243,8 +241,7 @@ describe('Path controller', () => {
                 ],
                 "path": "/user",
                 "schema": undefined,
-                "use": [controller.defaultErrorHandler],
-                cors: undefined
+                "use": [controller.defaultErrorHandler]
             });
         });
 
@@ -265,8 +262,7 @@ describe('Path controller', () => {
                 ],
                 "path": "/user/login",
                 "schema": undefined,
-                "use": [controller.defaultErrorHandler],
-                cors: undefined
+                "use": [controller.defaultErrorHandler]
             });
         });
 
@@ -300,8 +296,7 @@ describe('Path controller', () => {
                 ],
                 "path": "/user/{id}",
                 "schema": undefined,
-                "use": [controller.defaultErrorHandler],
-                cors: undefined
+                "use": [controller.defaultErrorHandler]
             });
         });
 
@@ -325,8 +320,7 @@ describe('Path controller', () => {
                 ],
                 "path": "/user/{id}/{username}",
                 "schema": undefined,
-                "use": [controller.defaultErrorHandler],
-                cors: undefined
+                "use": [controller.defaultErrorHandler]
             });
         });
     });
@@ -477,6 +471,62 @@ describe('Path controller', () => {
             }, res, null);
 
             expect(res.status.calledWith(200));
+            expect(res.end.calledWith());
+        });
+
+        it("should handle cors requests when cors is globally enabled", () => {
+            const controller = new PathController({
+                cors: true,
+                paths: [
+                    /**
+                     * CORS support paths
+                     */
+                    {
+                        method: 'GET',
+                        path: '/user/cors',
+                        requestHandler: (req, res) => {
+                        }
+                    },
+                    {
+                        method: 'GET',
+                        path: '/user/cors/uniquemethod',
+                        requestHandler: (req, res) => {
+                        }
+                    },
+                    {
+                        method: 'POST',
+                        path: '/user/cors/uniquemethod',
+                        requestHandler: (req, res) => {
+                        }
+                    },
+                    {
+                        method: 'GET',
+                        path: '/user/noncors/uniquemethod',
+                        cors: false,
+                        requestHandler: (req, res) => {
+                        }
+                    }
+                ]
+            });
+
+            let res = {};
+
+            res.setHeader = sinon.stub();
+            res.getHeader = sinon.stub();
+            res.status = sinon.stub().returns(res);
+            res.end = sinon.stub();
+
+            controller.executeRequest({
+                path: '/user/cors/uniquemethod',
+                method: 'OPTIONS',
+                headers : {
+                    origin : 'http://localhost:8080',
+                    'access-control-request-method': 'GET'
+                }
+            }, res, null);
+
+            expect(res.statusCode).to.equal(204);
+            expect(res.setHeader.calledWith('Access-Control-Allow-Origin', '*')).to.equal(true);
             expect(res.end.calledWith());
         })
 
