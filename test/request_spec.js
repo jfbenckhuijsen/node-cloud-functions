@@ -6,6 +6,7 @@ const sinonChai  = require("sinon-chai");
 chai.use(sinonChai);
 
 const expect     = chai.expect;
+const status     = require('http-status');
 
 const Boom       = require('Boom');
 const Joi        = require('Joi');
@@ -32,7 +33,7 @@ describe("Requester", () => {
         const res = doRequest({}, undefined, (LOGGER, req, res, resultHandler) => {
             resultHandler(response, null);
         });
-        expect(res.status).to.have.been.calledWith(200);
+        expect(res.status).to.have.been.calledWith(status.OK);
         expect(res.send).to.have.been.calledWith(response);
     });
 
@@ -42,7 +43,7 @@ describe("Requester", () => {
             const res = doRequest({}, undefined, (LOGGER, req, res, resultHandler) => {
                 throw "some error";
             });
-            expect(res.status).to.have.been.calledWith(500);
+            expect(res.status).to.have.been.calledWith(status.INTERNAL_SERVER_ERROR);
             expect(res.send).to.have.been.calledWith("{\"message\":\"some error\"}");
         });
 
@@ -50,7 +51,7 @@ describe("Requester", () => {
             const res = doRequest({}, undefined, (LOGGER, req, res, resultHandler) => {
                 resultHandler(null, "some error");
             });
-            expect(res.status.calledWith(500)).to.equal(true);
+            expect(res.status.calledWith(status.INTERNAL_SERVER_ERROR)).to.equal(true);
             expect(res.send).to.have.been.calledWith("{\"message\":\"some error\"}");
         });
 
@@ -58,11 +59,11 @@ describe("Requester", () => {
             const res = doRequest({}, undefined, (LOGGER, req, res, resultHandler) => {
                 resultHandler(null, Boom.paymentRequired("I need some payment", { amount: "12 euro" }));
             });
-            expect(res.status.calledWith(402)).to.equal(true);
+            expect(res.status.calledWith(status.PAYMENT_REQUIRED)).to.equal(true);
             expect(res.send).to.have.been.calledWith({
                 error: "Payment Required",
                 message: "I need some payment",
-                statusCode: 402
+                statusCode: status.PAYMENT_REQUIRED
             });
         });
     });
@@ -77,7 +78,7 @@ describe("Requester", () => {
             }, (LOGGER, req, res, resultHandler) => {
                 resultHandler(response, null);
             });
-            expect(res.status).to.have.been.calledWith(200);
+            expect(res.status).to.have.been.calledWith(status.OK);
             expect(res.send).to.have.been.calledWith(response);
         });
 
@@ -89,7 +90,7 @@ describe("Requester", () => {
             }, (LOGGER, req, res, resultHandler) => {
                 resultHandler(response, null);
             });
-            expect(res.status).to.have.been.calledWith(401);
+            expect(res.status).to.have.been.calledWith(status.UNAUTHORIZED);
             expect(res.send).to.have.been.calledWith([{message:"\"userName\" is required",path:"userName"}]);
         });
     });

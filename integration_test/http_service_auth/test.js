@@ -1,6 +1,7 @@
 "use strict";
 
 const base64        = require('base-64');
+const status        = require('http-status');
 
 module.exports = (it, superagent, expect, config) => {
 
@@ -8,7 +9,7 @@ module.exports = (it, superagent, expect, config) => {
         superagent.post(config.deploy_url)
             .send({ name: 'Functions'})
             .set('Content-Type', 'application/json')
-            .set('Authorization', base64.encode("admin:welcome"))
+            .set('Authorization', 'Basic ' + base64.encode("admin:welcome"))
             .end((err, res) => {
                 console.log("Called authenticated request");
 
@@ -25,11 +26,12 @@ module.exports = (it, superagent, expect, config) => {
         superagent.post(config.deploy_url)
             .send({ name: 'Functions'})
             .set('Content-Type', 'application/json')
-            .set('Authorization', base64.encode("admin:notwelcome"))
+            .set('Authorization', 'Basic ' + base64.encode("admin:notwelcome"))
             .end((err, res) => {
                 console.log("Called request with invalid credentials");
 
-                expect(err).to.be.null;
+                expect(err).to.not.be.null;
+                expect(err.status).to.equal(status.UNAUTHORIZED);
                 expect(res.unauthorized).to.equal(true);
 
                 done();

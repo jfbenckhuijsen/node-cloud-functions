@@ -7,6 +7,7 @@ const passport      = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
 const base64        = require('base-64');
 const DebugLogger   = require('../lib/debug');
+const status = require('http-status');
 
 passport.use(new BasicStrategy(
     function(username, password, done) {
@@ -75,7 +76,7 @@ describe('Path controller', () => {
                 method: 'POST',
                 path: '/user/{id}/{username}',
                 requestHandler: (req, res) => {
-                    res.status(200).send(req.params);
+                    res.status(status.OK).send(req.params);
                 }
             },
             {
@@ -141,7 +142,7 @@ describe('Path controller', () => {
                 path: '/user/noncors/uniquemethod',
                 cors: false,
                 requestHandler: (req, res) => {
-                    res.status(200).end();
+                    res.status(status.OK).end();
                 }
             },
             {
@@ -150,7 +151,7 @@ describe('Path controller', () => {
                 cors: false,
                 auth: true,
                 requestHandler: (req, res) => {
-                    res.status(200).end();
+                    res.status(status.OK).end();
                 }
             }
 
@@ -341,7 +342,7 @@ describe('Path controller', () => {
             }, res, null);
 
 
-            expect(res.status.calledWith(404)).to.equal(true);
+            expect(res.status.calledWith(status.NOT_FOUND)).to.equal(true);
             expect(res.send.called).to.equal(true);
         });
 
@@ -359,7 +360,7 @@ describe('Path controller', () => {
             }, res, null);
 
 
-            expect(res.status.calledWith(200)).to.equal(true);
+            expect(res.status.calledWith(status.OK)).to.equal(true);
             expect(res.send.calledWithMatch({
                 id : "12345",
                 username: 'abcdef'
@@ -380,7 +381,7 @@ describe('Path controller', () => {
             }, res, null);
 
 
-            expect(res.status.calledWith(500)).to.equal(true);
+            expect(res.status.calledWith(status.INTERNAL_SERVER_ERROR)).to.equal(true);
         });
     });
 
@@ -404,7 +405,7 @@ describe('Path controller', () => {
                 }
             }, res, null);
 
-            expect(res.statusCode).to.equal(204);
+            expect(res.statusCode).to.equal(status.NO_CONTENT);
             expect(res.setHeader.calledWith('Access-Control-Allow-Origin', '*')).to.equal(true);
             expect(res.end.calledWith());
         });
@@ -448,7 +449,7 @@ describe('Path controller', () => {
                 }
             }, res, null);
 
-            expect(res.statusCode).to.equal(204);
+            expect(res.statusCode).to.equal(status.NO_CONTENT);
             expect(res.setHeader.calledWith('Access-Control-Allow-Origin', '*')).to.equal(true);
             expect(res.end.calledWith());
         });
@@ -471,7 +472,7 @@ describe('Path controller', () => {
                 }
             }, res, null);
 
-            expect(res.status.calledWith(200));
+            expect(res.status.calledWith(status.OK));
             expect(res.end.calledWith());
         });
 
@@ -526,7 +527,7 @@ describe('Path controller', () => {
                 }
             }, res, null);
 
-            expect(res.statusCode).to.equal(204);
+            expect(res.statusCode).to.equal(status.NO_CONTENT);
             expect(res.setHeader.calledWith('Access-Control-Allow-Origin', '*')).to.equal(true);
             expect(res.end.calledWith());
         })
@@ -553,7 +554,7 @@ describe('Path controller', () => {
                 }
             }, res, null);
 
-            expect(res.status.calledWith(200));
+            expect(res.status.calledWith(status.OK));
             expect(res.end.calledWith());
         });
 
@@ -575,7 +576,7 @@ describe('Path controller', () => {
                 }
             }, res, null);
 
-            expect(res.status.calledWith(401));
+            expect(res.status.calledWith(status.UNAUTHORIZED));
             expect(res.end.calledWith());
         });
     })
