@@ -1,8 +1,8 @@
 "use strict";
 
-const CloudFunctions = require('cloud-functions')(__dirname + '/config.json', '');
+const CloudServant = require('cloud-servant')(__dirname + '/config.json', '');
 
-module.exports = CloudFunctions.restServiceModule({
+module.exports = CloudServant.restServiceModule({
     name: 'http-service-hello-world',
     paths : [
         {

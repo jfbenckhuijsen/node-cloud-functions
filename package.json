@@ -1,7 +1,26 @@
 {
-  "name": "cloud-functions",
-  "version": "0.0.1",
+  "name": "cloud-servant",
+  "version": "1.0.0",
   "main": "lib/index.js",
+  "author": "Jeroen Benckhuijsen <jeroen.benckhuijsen@gmail.com>",
+  "description": "Microservices framework for Serverless Computing functions",
+  "keywords": [
+    "Google Cloud",
+    "Amazon AWS",
+    "Serverless",
+    "Microservices"
+  ],
+  "license": "ISC",
+
+  "homepage": "https://github.com/jfbenckhuijsen/node-cloud-functions",
+  "bugs": {
+    "url": "https://github.com/jfbenckhuijsen/node-cloud-functions/issues"
+  },
+  "repository" : {
+    "type" : "git",
+    "url": "https://github.com/jfbenckhuijsen/node-cloud-functions.git"
+  },
+
   "scripts": {
     "test": "mocha test"
   },

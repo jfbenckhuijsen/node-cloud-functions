@@ -1,6 +1,6 @@
 "use strict";
 
-const CloudFunctions = require('cloud-functions')(__dirname + '/config.json', '');
+const CloudServant = require('cloud-servant')(__dirname + '/config.json', '');
 const passport      = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
 
@@ -24,7 +24,7 @@ passport.deserializeUser(function(user, done) {
     done(null, user);
 });
 
-module.exports = CloudFunctions.restServiceModule({
+module.exports = CloudServant.restServiceModule({
     name: 'http-service-auth',
     cors: false,
     debug: true,

@@ -1,8 +1,8 @@
-# Cloud Functions NodeJS MicroServices Framework
+# CloudServant NodeJS MicroServices Framework
 
 _***Note: this framework is currently work in progress. The API may change at any time***_
 
-Cloud Functions is a framework aimed to allow to easily write functions running on one 
+CloudServant is a framework aimed to allow to easily write functions running on one 
 of the well known Cloud platforms:
  - Google Cloud Functions
  - Amazon AWS Lamba
@@ -10,7 +10,7 @@ of the well known Cloud platforms:
  
 Each of these platforms have their own interfaces to which a service must comply and set 
 of backend services which can be interacted with (like databases or messaging platforms). The
-aim of the CloudFunctions framework is to bridge these differences and provide developers
+aim of the CloudServant framework is to bridge these differences and provide developers
 with a unified framework to develop for each of these platforms.
 
 This framework was created based on some early experiments with these platforms and the 
@@ -34,15 +34,15 @@ let the framework generate a module definition based on that definition for the 
 runtime platform you're aiming at:
 
 ```js
-const CloudFunctions = require('cloud-functions')(configFile, configTreePath);
+const CloudServant = require('cloud-servant')(configFile, configTreePath);
 
-module.exports = CloudFunctions.restServiceModule({
+module.exports = CloudServant.restServiceModule({
     // Specification of the service 
 });
 ```
 
 The configFile is a JSON based file which can be read by the [Confluence](https://github.com/hapijs/confidence) package. It is 
-used to configure CloudFunctions itself and provide a generic infrastructure to pass 
+used to configure CloudServant itself and provide a generic infrastructure to pass 
  values to your service. The format of the config file is detailed below.
 
 Two types of service modules can be created:
@@ -55,9 +55,9 @@ modules, other Backend Service modules or by other triggers (e.g. file uploads, 
 processes, etc.). Backend Service modules are triggered in an asynchronous manner by their
 callers.
 
-#### General API of the CloudFunctions API object
+#### General API of the CloudServant API object
 
-The CloudFunctions object has the following API:
+The CloudServant object has the following API:
 
 | Field | Explanation |
 |-------|-------------|
@@ -84,7 +84,7 @@ TODO:!!!!!! --> Document
 #### Google Datastore support
 
 In case the `googleDatastore` object is specifed in the configuration, a Google DataStore and [gstore-node](https://github.com/sebelga/gstore-node) 
-object is defined. The CloudFunctions object then has a field `db` as follows:
+object is defined. The CloudServant object then has a field `db` as follows:
  
 ```js
 {
@@ -97,13 +97,13 @@ object is defined. The CloudFunctions object then has a field `db` as follows:
 
 ### REST Service Modules
 
-REST Service modules are defined by called the `restServiceModule()` function on the CloudFunctions API Object. The
+REST Service modules are defined by called the `restServiceModule()` function on the CloudServant API Object. The
 method takes an options object specifying the definition of the service module:
 
 ```js
-const CloudFunctions = require('cloud-functions')(configFile, configTreePath);
+const CloudServant = require('cloud-servant')(configFile, configTreePath);
 
-module.exports = CloudFunctions.restServiceModule({
+module.exports = CloudServant.restServiceModule({
     name: 'REQUIRED: Name of the service module',
     use: "Array of Express/Connect compatbile middleware executed on all paths (see Middleware support below)",
     cors: 'Boolean: enables support for CORS on all paths. See CORS support',
@@ -168,11 +168,11 @@ Errors occuring within the calls to the handler method are automatically handled
 
 #### Middleware support
 
-CloudFunctions has support for Express/Connect based middleware. Middleware can be configured at top level for
+CloudServant has support for Express/Connect based middleware. Middleware can be configured at top level for
  all paths or overridden on a per-path basis as detailed above. 
  
 Given the extended configuration needed and the fact that this type of middleware is often used in various services
-CloudFunctions has support for the following standard middleware:
+CloudServant has support for the following standard middleware:
 * CORS using [Node cors](https://github.com/expressjs/cors).
 * Authentication using [Passport](http://passportjs.org/)
 
@@ -248,7 +248,7 @@ passport.use(new JwtStrategy(JWT_OPTS, (jwt_payload, done) => {
 }));
 
 // Service configuration
-module.exports = CloudFunctions.restServiceModule({
+module.exports = CloudServant.restServiceModule({
     name: 'kantoordag-tracker',
     cors: true,
     debug: true,
