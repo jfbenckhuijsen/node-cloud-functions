@@ -61,7 +61,7 @@ const gcloud_strategy = {
                     if (deploy_url == "") {
                         done(new Error("No deploy url found"));
                     }
-                    done(null, deploy_url);
+                    done(null, deploy_url.trim());
                 });
             }  else {
                 done(new Error("Deploy code: " + code));

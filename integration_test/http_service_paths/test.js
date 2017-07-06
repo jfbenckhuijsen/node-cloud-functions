@@ -50,5 +50,4 @@ module.exports = (it, superagent, expect, config) => {
             });
     });
 
-
 };

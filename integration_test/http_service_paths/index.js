@@ -4,13 +4,11 @@ const CloudFunctions = require('cloud-functions')(__dirname + '/config.json', ''
 
 module.exports = CloudFunctions.restServiceModule({
     name: 'http-service-paths',
-    debug: true,
     paths : [
         {
             method: "POST",
             path: "/path1",
             handler: (LOGGER, req, res) => {
-                console.log("Path1 POST");
                 res.send(`PATH1 POST ${req.body.name || 'World'}!`);
             }
         },
@@ -18,7 +16,6 @@ module.exports = CloudFunctions.restServiceModule({
             method: "GET",
             path: "/path1",
             handler: (LOGGER, req, res) => {
-                console.log("Path1 GET");
                 res.send('PATH1 GET World}!');
             }
         },
@@ -26,7 +23,6 @@ module.exports = CloudFunctions.restServiceModule({
             method: "POST",
             path: "/path2",
             handler: (LOGGER, req, res) => {
-                console.log("Path2 POST");
                 res.send(`PATH2 POST ${req.body.name || 'World'}!`);
             }
         },

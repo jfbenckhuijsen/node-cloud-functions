@@ -27,6 +27,7 @@ passport.deserializeUser(function(user, done) {
 module.exports = CloudFunctions.restServiceModule({
     name: 'http-service-auth',
     cors: false,
+    debug: true,
     authStrategies : {
         default: passport.authenticate('basic', {session: false})
     },
