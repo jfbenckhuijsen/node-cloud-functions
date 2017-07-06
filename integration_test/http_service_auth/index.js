@@ -1,9 +1,8 @@
 "use strict";
 
-const CloudFunctions = require('../../lib/index.js')(__dirname + '/config.json', '');
+const CloudFunctions = require('cloud-functions')(__dirname + '/config.json', '');
 const passport      = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
-const base64        = require('base-64');
 
 passport.use(new BasicStrategy(
     function(username, password, done) {
@@ -17,11 +16,19 @@ passport.use(new BasicStrategy(
     }
 ));
 
+passport.serializeUser(function(user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+    done(null, user);
+});
+
 module.exports = CloudFunctions.restServiceModule({
-    name: 'http_service_hello_auth_world',
+    name: 'http-service-auth',
     cors: false,
     authStrategies : {
-        default: passport.authenticate('basic')
+        default: passport.authenticate('basic', {session: false})
     },
     paths : [
         {

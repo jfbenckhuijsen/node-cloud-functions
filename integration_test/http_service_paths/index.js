@@ -1,40 +1,40 @@
 "use strict";
 
-const CloudFunctions = require('../../lib/index.js')(__dirname + '/config.json', '');
+const CloudFunctions = require('cloud-functions')(__dirname + '/config.json', '');
 
 module.exports = CloudFunctions.restServiceModule({
-    name: 'http_service_paths',
-    cors: false,
+    name: 'http-service-paths',
+    debug: true,
     paths : [
         {
             method: "POST",
             path: "/path1",
-            auth: false,
             handler: (LOGGER, req, res) => {
+                console.log("Path1 POST");
                 res.send(`PATH1 POST ${req.body.name || 'World'}!`);
             }
         },
         {
             method: "GET",
             path: "/path1",
-            auth: false,
             handler: (LOGGER, req, res) => {
+                console.log("Path1 GET");
                 res.send('PATH1 GET World}!');
             }
         },
         {
             method: "POST",
             path: "/path2",
-            auth: false,
             handler: (LOGGER, req, res) => {
+                console.log("Path2 POST");
                 res.send(`PATH2 POST ${req.body.name || 'World'}!`);
             }
         },
         {
             method: "POST",
             path: "/parampath/{param}",
-            auth: false,
             handler: (LOGGER, req, res) => {
+                console.log("Parampath");
                 res.send(`PARAMPATH ${req.params.param || 'World'}!`);
             }
         }

@@ -1,5 +1,5 @@
 {
-  "name": "cloud-functions-service-hello-world",
+  "name": "cloud-functions-service-cors",
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
