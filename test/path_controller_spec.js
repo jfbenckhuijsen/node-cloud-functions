@@ -6,6 +6,7 @@ const expect        = chai.expect;
 const passport      = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
 const base64        = require('base-64');
+const DebugLogger   = require('../lib/debug');
 
 passport.use(new BasicStrategy(
     function(username, password, done) {
@@ -161,7 +162,7 @@ describe('Path controller', () => {
 
     describe('--> toApiRequest', () => {
         it('should find the API based on a request with a unknown path', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let apiRequest = controller.toApiRequest({
                 path: '/posts',
@@ -172,7 +173,7 @@ describe('Path controller', () => {
         });
 
         it('should find the API based on a request with a unknown method', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let apiRequest = controller.toApiRequest({
                 path: '/user',
@@ -183,7 +184,7 @@ describe('Path controller', () => {
         });
 
         it('should find the API based on a request for the root path (empty string)', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let apiRequest = controller.toApiRequest({
                 path: '',
@@ -204,7 +205,7 @@ describe('Path controller', () => {
         });
 
         it('should find the API based on a request for the root path (null)', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let apiRequest = controller.toApiRequest({
                 path: null,
@@ -225,7 +226,7 @@ describe('Path controller', () => {
         });
 
         it('should find the API based on a request with a single level path', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let apiRequest = controller.toApiRequest({
                 path: '/user',
@@ -246,7 +247,7 @@ describe('Path controller', () => {
         });
 
         it('should find the API based on a request with a multi level path', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let apiRequest = controller.toApiRequest({
                 path: '/user/login',
@@ -267,7 +268,7 @@ describe('Path controller', () => {
         });
 
         it('should find the API based on a request with a duplicate', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             expect(() => {
                 controller.toApiRequest({
@@ -278,7 +279,7 @@ describe('Path controller', () => {
         });
 
         it('should find the API based on a request with a single parameter', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let apiRequest = controller.toApiRequest({
                 path: '/user/12345',
@@ -301,7 +302,7 @@ describe('Path controller', () => {
         });
 
         it('should find the API based on a request with multiple parameters', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let apiRequest = controller.toApiRequest({
                 path: '/user/12345/abcdef',
@@ -327,7 +328,7 @@ describe('Path controller', () => {
 
     describe('--> executeRequest', () => {
         it('should return status 404 in case the request cannot be found', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let res = {};
 
@@ -345,7 +346,7 @@ describe('Path controller', () => {
         });
 
         it('should call the handler on a request', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let res = {};
 
@@ -366,7 +367,7 @@ describe('Path controller', () => {
         });
 
         it('should call the default error handler on middleware error', () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let res = {};
 
@@ -385,7 +386,7 @@ describe('Path controller', () => {
 
     describe('--> cors based requests', () => {
         it("should answer to a CORS options request", () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let res = {};
 
@@ -409,7 +410,7 @@ describe('Path controller', () => {
         });
 
         it("should add CORS headers to a regular request", () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let res = {};
 
@@ -429,7 +430,7 @@ describe('Path controller', () => {
         });
 
         it("should handle cors OPTIONS requests to paths where only the method differs", () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let res = {};
 
@@ -453,7 +454,7 @@ describe('Path controller', () => {
         });
 
         it("should handle non-cors OPTIONS requests to paths where only the method differs", () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let res = {};
 
@@ -507,7 +508,7 @@ describe('Path controller', () => {
                         }
                     }
                 ]
-            });
+            }, DebugLogger(true));
 
             let res = {};
 
@@ -534,7 +535,7 @@ describe('Path controller', () => {
 
     describe('--> authenticated requests', () => {
         it("should handle authentication - success", () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let res = {};
 
@@ -557,7 +558,7 @@ describe('Path controller', () => {
         });
 
         it("should handle authentication - failed", () => {
-            const controller = new PathController(OPTIONS);
+            const controller = new PathController(OPTIONS, DebugLogger(true));
 
             let res = {};
 
