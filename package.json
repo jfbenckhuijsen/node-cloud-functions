@@ -11,20 +11,19 @@
     "Microservices"
   ],
   "license": "ISC",
-
   "homepage": "https://github.com/jfbenckhuijsen/node-cloud-functions",
   "bugs": {
     "url": "https://github.com/jfbenckhuijsen/node-cloud-functions/issues"
   },
-  "repository" : {
-    "type" : "git",
+  "repository": {
+    "type": "git",
     "url": "https://github.com/jfbenckhuijsen/node-cloud-functions.git"
   },
-
   "scripts": {
     "test": "mocha test"
   },
   "dependencies": {
+    "@google-cloud/datastore": "^1.0.3",
     "argparse": "^1.0.9",
     "boom": "^4.2.0",
     "chalk": "^1.1.3",

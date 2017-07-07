@@ -1,0 +1,7 @@
+{
+  "platform" : "GCF",
+  "googleDatastore" : {
+    "apiEndpoint": "localhost:8081"
+  }
+
+}
