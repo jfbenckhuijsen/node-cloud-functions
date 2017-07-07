@@ -55,7 +55,7 @@ module.exports = (it, superagent, expect, config) => {
 
                                 console.log("Order updated");
 
-                                superagent.get(config.deploy_url + '/orders/')
+                                superagent.get(config.deploy_url + '/orders')
                                     .set('Content-Type', 'application/json')
                                     .set('Authorization', auth_header)
                                     .end((err, res) => {
@@ -64,9 +64,8 @@ module.exports = (it, superagent, expect, config) => {
 
                                         console.log("Orders queried");
 
-                                        expect(res.body.length).to.equal(1);
+                                        let order = res.body.filter((order) => order.id === orderId)[0];
 
-                                        let order = res.body[0];
                                         expect(order.customerName).to.be.equal("MyEnterprise");
                                         expect(order.deliveryAddress).to.be.equal("2 CloudStreet, Sky city");
                                         expect(order.invoiceAddress).to.be.equal("1 CloudStreet, Sky city");
@@ -79,12 +78,12 @@ module.exports = (it, superagent, expect, config) => {
                                                 expect(res.ok).to.equal(true);
 
                                                 console.log("Orders deleted");
+
+                                                done();
                                             });
                                     });
 
                             });
-
-                        done();
                     });
             });
     });
