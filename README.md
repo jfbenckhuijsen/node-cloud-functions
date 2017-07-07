@@ -1,6 +1,7 @@
 # CloudServant NodeJS MicroServices Framework
 
-_***Note: this framework is currently work in progress. The API may change at any time***_
+>_***Note: this framework is currently work in progress. The API may change at any time. Current support is mainly focussed 
+ on Google Cloud Functions. Full support for AWS is lacking for now.***_
 
 CloudServant is a framework aimed to allow to easily write functions running on one 
 of the well known Cloud platforms:
@@ -66,6 +67,9 @@ The CloudServant object has the following API:
 | db | Object representing a connection to the DB object of the underlying Cloud platform, if configured. This is either a connection to [gstore-node](https://github.com/sebelga/gstore-node) or [Dynamoose](https://github.com/automategreen/dynamoose)| 
 
 
+> Note: cloud-servant comes with a command line tool (cloud-servant) to generate an initial skeleton of an application.
+ the tool to see the various command line arguments.
+ 
 ### Configuration file format
 
 The format of the configuration file is as follows:
@@ -78,8 +82,17 @@ The format of the configuration file is as follows:
 
 #### Logging support
 
+To provide transparent support for logging, a LOGGER object is provided to each call handler methods. This object has a 
+number of functions as fields, which support logging at various levels:
 
-TODO:!!!!!! --> Document
+| Method | Explanation |
+|--------|-------------|
+| debug  | Logs messages with debug level severity, used for debugging the application |
+| info   | Logs messages with info level severity, used for normal flows |
+| warning| Logs messages with warning level severity, used for strange but non-fatal application behavior |
+| error  | Logs messages with error level severity, used for application errors |
+
+TODO:There is currently no way to limit the level of log messages which get passed thru.
 
 #### Google Datastore support
 
@@ -166,7 +179,7 @@ Errors occuring within the calls to the handler method are automatically handled
     * In case this object is a [Boom](https://github.com/hapijs/boom) object, this is used to send the correct HTTP response to the client
     * In all other cases, a HTTP 500 is send to the client as an HTTP Error 500, with the stringified Error object as payload
 
-#### Middleware support
+#### Connect Middleware support
 
 CloudServant has support for Express/Connect based middleware. Middleware can be configured at top level for
  all paths or overridden on a per-path basis as detailed above. 
@@ -249,7 +262,7 @@ passport.use(new JwtStrategy(JWT_OPTS, (jwt_payload, done) => {
 
 // Service configuration
 module.exports = CloudServant.restServiceModule({
-    name: 'kantoordag-tracker',
+    name: 'auth-example',
     cors: true,
     debug: true,
     authStrategies: {

@@ -45,6 +45,6 @@
     "superagent": "^3.5.2"
   },
   "bin": {
-    "node-cloud-functions": "lib/cli.js"
+    "cloud-servant": "lib/cli.js"
   }
 }
