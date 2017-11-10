@@ -1,0 +1,8 @@
+{
+  "name": "cloud-functions-service-paths",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "cloud-servant": "git+https://github.com/jfbenckhuijsen/node-cloud-functions.git"
+  }
+}

@@ -5,14 +5,14 @@
 
 CloudServant is a framework aimed to allow to easily write functions running on one 
 of the well known Cloud platforms:
- - Google Cloud Functions
+ - Google Cloud Functions (including Firebase)
  - Amazon AWS Lamba
  - Microsoft Azure (currently not supported)
  
 Each of these platforms have their own interfaces to which a service must comply and set 
 of backend services which can be interacted with (like databases or messaging platforms). The
 aim of the CloudServant framework is to bridge these differences and provide developers
-with a unified framework to develop for each of these platforms.
+with a unified framework to develop for each of these platforms as much as possible.
 
 This framework was created based on some early experiments with these platforms and the 
 effort involved to rewrite an application originally created for AWS Lamba to Google Cloud 
@@ -25,6 +25,7 @@ the internal frameworks of Hapi being used.
 
 This framework provides the following features:
 - Definition of service modules
+- Definition of message modules
 - Abstraction of default databases provided by the Cloud provider
 - Module configuration based on [Confluence](https://github.com/hapijs/confidence)
 - Often used features for REST based services.
@@ -63,6 +64,8 @@ The CloudServant object has the following API:
 | Field | Explanation |
 |-------|-------------|
 | restServiceModule | Method to create a REST service module |
+| messageModule | Method to create a Message service module |
+| builder | Method to combine multiple types of modules into a single file |
 | pluginOptions | Method to retrieve options from the configuration file for a specific path | 
 | db | Object representing a connection to the DB object of the underlying Cloud platform, if configured. This is either a connection to [gstore-node](https://github.com/sebelga/gstore-node) or [Dynamoose](https://github.com/automategreen/dynamoose)| 
 
@@ -76,8 +79,8 @@ The format of the configuration file is as follows:
 
 | Field    | Explanation                                                                      |
 |----------|----------------------------------------------------------------------------------|
-| platform | Either "GCF" or "AWS" to run your module on Google Cloud Functions or AWS Lambda |
-| googleDatastore | (GCF Specific) Specifies the configuration for google data store and [gstore-node](https://github.com/sebelga/gstore-node)|
+| platform | Either "GCF", "Firebase" or "AWS" to run your module on Google Cloud Functions, Firebase or AWS Lambda |
+| googleDatastore | (GCF/Firebase Specific) Specifies the configuration for google data store and [gstore-node](https://github.com/sebelga/gstore-node)|
 |          |                                                                                  |
 
 #### Logging support
@@ -107,8 +110,27 @@ object is defined. The CloudServant object then has a field `db` as follows:
 }
 ```
 
+## Modules and Builder support
 
-### REST Service Modules
+CloudServant allows various types of modules to be created, each of which will be detailed in the following paragraphs. 
+
+Apart from the individual modules, CloudServant supports a builder to define multiple modules (of various types) in the
+same file. This allows for convenient grouping of functionally related functions.
+
+The builder is invoked by calling the `builder()` method on CloudServant. A fluent API can be used to define the various 
+modules:
+
+```js
+module.exports = CloudServant.builder()
+    .restServiceModule(/* REST configuration */)
+    .messageModule(/* Message configuration */)
+    .build();
+``` 
+
+Note that each of the modules needs to be configured with a unique name, specified in the name field in the configuration
+options object. Initialization will fail if duplicate names are detected.
+
+## REST Service Modules
 
 REST Service modules are defined by called the `restServiceModule()` function on the CloudServant API Object. The
 method takes an options object specifying the definition of the service module:
@@ -271,5 +293,30 @@ module.exports = CloudServant.restServiceModule({
     paths: [
         
     ]
-}
+});
+```
+
+## Message Service Definition
+
+Message Service modules are defined by called the `messageModule()` function on the CloudServant API Object. The
+method takes an options object specifying the definition of the service module:
+
+```js
+const CloudServant = require('cloud-servant')(configFile, configTreePath);
+
+module.exports = CloudServant.messageModule({
+    name: 'REQUIRED: Name of the service module',
+    handler: function(LOGGER, event) {
+        // LOGGER is an instance of the generic Logging class
+        // event is the event object containing the message. It is guaranteed to have the following properties:
+        // - json : A JSON object with the contents of the data
+        // - stringData: A string representation of the data
+        // - data: The original data of the message
+        // Note that the event object of the original message may be passed so additional properties may be present. Usage
+        // these properties limits the portability of your code.
+        
+        // This method may return a Promise object in case asynchronous operations are involved. If no Promise is returned,
+        // the function execution can be stopped immediately after the function returns by the underlying platform.   
+    }
+});
 ```

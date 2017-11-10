@@ -15,6 +15,7 @@
  */
 
 const superagent    = require('superagent');
+const PubSub        = require('@google-cloud/pubsub');
 const chai          = require('chai');
 const expect        = chai.expect;
 const fs            = require('fs');
@@ -41,24 +42,60 @@ function do_spawn(script, args, callback) {
 }
 
 function getDirectories (srcpath) {
+    console.log("Searching directories in " + srcpath);
     return fs.readdirSync(srcpath)
-        .filter(file => fs.lstatSync(path.join(srcpath, file)).isDirectory())
+        .filter(file => {
+            let is_dir = fs.lstatSync(path.join(srcpath, file)).isDirectory();
+            console.log("Checking file " + file + " -> " + is_dir);
+            return is_dir;
+        })
+}
+
+function getDirectoryType(srcpath, directory) {
+    let subdir = directory.substring(srcpath.length + 1);
+
+    console.log(subdir);
+
+    let underscore = subdir.indexOf("_");
+
+    console.log(underscore);
+
+    return subdir.substring(0, underscore);
 }
 
 const gcloud_strategy = {
     deploy: (directory, func, done) => {
+        function determine_trigger(directory) {
+            let directoryType = getDirectoryType(__dirname, directory);
+
+            if (directoryType == "http") {
+                return "--trigger-http"
+            } else if (directoryType == "message") {
+                let topic = process.env.TRIGGER_TOPIC;
+                if (!topic) {
+                    throw new Error("No trigger topic configured");
+                }
+
+                return "--trigger-topic " + topic;
+            } else {
+                throw new Error("Unknown directory type " + directoryType);
+            }
+        }
+
         let bucket = process.env.DEPLOY_BUCKET;
         if (!bucket) {
             throw new Error("No deployment bucket configured");
         }
 
-        do_spawn('deploy.sh', [directory, func, bucket], (code) => {
-            if (code == 0) {
+        let trigger = determine_trigger(directory);
+
+        do_spawn('deploy.sh', [directory, func, bucket, trigger], (code) => {
+            if (code === 0) {
                 fs.readFile(directory + '/deploy_url', "utf8", (err, deploy_url) => {
                     if (err) {
                         done(err);
                     }
-                    if (deploy_url == "") {
+                    if (deploy_url === "") {
                         done(new Error("No deploy url found"));
                     }
                     done(null, deploy_url.trim());
@@ -71,7 +108,7 @@ const gcloud_strategy = {
 
     undeploy: (func, done) => {
         let child = do_spawn('undeploy.sh', [func], (code) => {
-            if (code == 0) {
+            if (code === 0) {
                 done();
             }  else {
                 done(new Error("Deploy code: " + code));
@@ -79,6 +116,33 @@ const gcloud_strategy = {
         });
 
         child.stdin.write("Y\n");
+    },
+
+    messageSender: (message) => {
+        // Instantiates a client
+        const pubsub = PubSub();
+
+        let topicName = process.env.TEST_TOPIC;
+        if (!topicName) {
+            throw new Error("No test topic configured for message services.");
+        }
+
+        // References an existing topic, e.g. "my-topic"
+        const topic = pubsub.topic(topicName);
+
+        // Create a publisher for the topic (which can include additional batching configuration)
+        const publisher = topic.publisher();
+
+        // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
+        const dataBuffer = Buffer.from(message);
+        return publisher.publish(dataBuffer)
+            .then((results) => {
+                const messageId = results[0];
+
+                console.log(`Message ${messageId} published.`);
+
+                return messageId;
+            });
     }
 };
 
@@ -94,7 +158,7 @@ describe("It should run all integration tests for ", function() {
         const directory = __dirname + '/' + dirname;
         const tester = directory + '/test.js';
         const func = dirname.replace(/_/g, '-');
-        const deployStrategy = gcloud_strategy; // TODO: Configurable
+        const runnerStrategy = gcloud_strategy; // TODO: Configurable
 
         if (fs.existsSync(tester)) {
             describe("all test in " + directory + ":", () => {
@@ -104,22 +168,30 @@ describe("It should run all integration tests for ", function() {
                 };
 
                 before((done) => {
-                    deployStrategy.deploy(directory, func, (err, deploy_url) => {
+                    runnerStrategy.deploy(directory, func, (err, deploy_url) => {
                         console.log("Configured endpoint URL as :" + deploy_url);
 
                         config.deploy_url = deploy_url;
 
-                        console.log('*****************************************************************************')
+                        console.log('*****************************************************************************');
                         done(err);
                     });
                 });
 
                 after((done) => {
-                    deployStrategy.undeploy(func, done);
+                    runnerStrategy.undeploy(func, done);
                 });
 
                 const createTests = require(tester);
-                createTests(it, superagent, expect, config);
+                let directoryType = getDirectoryType(__dirname, directory);
+
+                if (directoryType == "http") {
+                    createTests(it, superagent, expect, config);
+                } else if (directoryType == "message") {
+                    createTests(it, runnerStrategy.messageSender, expect, config);
+                } else {
+                    throw new Error("Unknown directory type " + directoryType);
+                }
             })
         }
     });
