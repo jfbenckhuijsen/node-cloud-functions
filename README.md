@@ -142,7 +142,7 @@ module.exports = CloudServant.restServiceModule({
     name: 'REQUIRED: Name of the service module',
     use: "Array of Express/Connect compatbile middleware executed on all paths (see Middleware support below)",
     cors: 'Boolean: enables support for CORS on all paths. See CORS support',
-    debug: 'Boolean: enables a specific path /_paths to show the set of configured paths',
+    debug: 'Boolean: enables a specific path /_paths to show the set of configured paths and debugging logging of the framework',
     authStrategies: { // Optional, enables authentication
         default: passport.authenticate() // The default passport strategy to use
         [other name]: passport.authenticate() // Alternative strategies
@@ -306,6 +306,7 @@ const CloudServant = require('cloud-servant')(configFile, configTreePath);
 
 module.exports = CloudServant.messageModule({
     name: 'REQUIRED: Name of the service module',
+    debug: 'Boolean: enables debugging logging of the framework',
     handler: function(LOGGER, event) {
         // LOGGER is an instance of the generic Logging class
         // event is the event object containing the message. It is guaranteed to have the following properties:
