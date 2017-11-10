@@ -9,7 +9,9 @@ describe("MessageController.js", () => {
 
     it("should call the passed handler", (done) => {
         let event = {
-            data: new Buffer("Hello World")
+            data: {
+                data: new Buffer("Hello World")
+            }
         };
         MessageController(DEBUG, (Logger, event) => {
             done();
@@ -18,7 +20,9 @@ describe("MessageController.js", () => {
 
     it("should return the promise of the handler", (done) => {
         let event = {
-            data: new Buffer("Hello World")
+            data: {
+                data: new Buffer("Hello World")
+            }
         };
         let promise = MessageController(DEBUG, (Logger, event) => {
 
@@ -36,7 +40,9 @@ describe("MessageController.js", () => {
 
     it("should return a promise by itself and resolve this in case the handler doesn't", (done) => {
         let event = {
-            data: new Buffer("Hello World")
+            data: {
+                data: new Buffer("Hello World")
+            }
         };
         let promise = MessageController(DEBUG, (Logger, event) => {})(event);
 
@@ -47,7 +53,9 @@ describe("MessageController.js", () => {
 
     it("should augement the event with a json property", (done) => {
         let event = {
-            data: new Buffer(JSON.stringify({message : "Hello World"}))
+            data: {
+                data: new Buffer(JSON.stringify({message : "Hello World"}))
+            }
         };
 
         let promise = MessageController(DEBUG, (Logger, event) => {
@@ -70,7 +78,9 @@ describe("MessageController.js", () => {
 
     it("should not augement the event with a json property in case it exists", (done) => {
         let event = {
-            data: new Buffer("Hello World"),
+            data: {
+                data: new Buffer("Hello World")
+            },
             json: "This is JSON"
         };
         let promise = MessageController(DEBUG, (Logger, event) => {
@@ -93,7 +103,9 @@ describe("MessageController.js", () => {
 
     it("should augement the event with a stringData property", (done) => {
         let event = {
-            data: new Buffer("Hello World")
+            data: {
+                data: new Buffer("Hello World")
+            }
         };
 
         let promise = MessageController(DEBUG, (Logger, event) => {
@@ -116,7 +128,9 @@ describe("MessageController.js", () => {
 
     it("should not augement the event with a stringData property in case it exists", (done) => {
         let event = {
-            data: new Buffer("Hello World"),
+            data: {
+                data: new Buffer("Hello World")
+            },
             stringData: "This is stringdata"
         };
         let promise = MessageController(DEBUG, (Logger, event) => {
