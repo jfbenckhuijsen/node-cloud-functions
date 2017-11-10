@@ -7,10 +7,13 @@ const path          = require('path');
 
 module.exports = CloudServant.messageModule({
     name: 'message-service-hello-world',
-    handler: function(message) {
+    debug: true,
+    handler: function(LOGGER, event) {
+        LOGGER.debug("Received request on hello world message service");
+
         return new Promise(function (resolve, reject) {
-            console.log("Hello World " + message.stringData);
-            return resolve();
+            LOGGER.info("Type of data: " + typeof event.data);
+            LOGGER.info("Hello World " + event.stringData);
         });
     }
 });

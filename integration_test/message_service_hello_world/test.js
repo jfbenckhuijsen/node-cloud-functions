@@ -8,6 +8,7 @@ module.exports = (it, messageSender, expect, config) => {
         let id = Math.floor(Math.random() * 1000);
 
         messageSender("" + id);
-        done();
+
+        setTimeout(done, 3000)
     });
 };
