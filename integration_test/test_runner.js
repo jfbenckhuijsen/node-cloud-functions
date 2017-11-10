@@ -53,13 +53,7 @@ function getDirectories (srcpath) {
 
 function getDirectoryType(srcpath, directory) {
     let subdir = directory.substring(srcpath.length + 1);
-
-    console.log(subdir);
-
     let underscore = subdir.indexOf("_");
-
-    console.log(underscore);
-
     return subdir.substring(0, underscore);
 }
 
@@ -71,7 +65,7 @@ const gcloud_strategy = {
             if (directoryType == "http") {
                 return "--trigger-http"
             } else if (directoryType == "message") {
-                let topic = process.env.TRIGGER_TOPIC;
+                let topic = process.env.TEST_TOPIC;
                 if (!topic) {
                     throw new Error("No trigger topic configured");
                 }
