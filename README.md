@@ -307,6 +307,7 @@ const CloudServant = require('cloud-servant')(configFile, configTreePath);
 module.exports = CloudServant.messageModule({
     name: 'REQUIRED: Name of the service module',
     debug: 'Boolean: enables debugging logging of the framework',
+    topicName: 'Firebase-only: specify the name of the topic to listen too',
     handler: function(LOGGER, event) {
         // LOGGER is an instance of the generic Logging class
         // event is the event object containing the message. It is guaranteed to have the following properties:
