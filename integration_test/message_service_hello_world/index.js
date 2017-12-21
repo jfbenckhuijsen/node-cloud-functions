@@ -3,6 +3,9 @@
 const CloudServant  = require('cloud-servant')(__dirname + '/config.json', '');
 const fs            = require('fs');
 const path          = require('path');
+const PubSub        = require('@google-cloud/pubsub');
+const pubsub = PubSub();
+
 
 
 module.exports = CloudServant.messageModule({
@@ -13,7 +16,22 @@ module.exports = CloudServant.messageModule({
 
         return new Promise(function (resolve, reject) {
             LOGGER.info("Type of data: " + typeof event.data);
-            LOGGER.info("Hello World " + event.stringData);
+            LOGGER.info("Reply topic is:  " + event.stringData);
+            // References an existing topic, e.g. "my-topic"
+            const topic = pubsub.topic(event.stringData);
+
+            // Create a publisher for the topic (which can include additional batching configuration)
+            const publisher = topic.publisher();
+
+            const dataBuffer = Buffer.from(event.stringData);
+            publisher.publish(dataBuffer)
+                .then((results) => {
+                    const messageId = results[0];
+
+                    console.log(`Message ${messageId} published.`);
+
+                    return messageId;
+            });
         });
     }
 });

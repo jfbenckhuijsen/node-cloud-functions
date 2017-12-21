@@ -59,12 +59,13 @@ function getDirectoryType(srcpath, directory) {
 
 const gcloud_strategy = {
     deploy: (directory, func, done) => {
-        function determine_trigger(directory) {
-            let directoryType = getDirectoryType(__dirname, directory);
+        let directoryType = getDirectoryType(__dirname, directory);
 
-            if (directoryType == "http") {
+        function determine_trigger() {
+
+            if (directoryType === "http") {
                 return "--trigger-http"
-            } else if (directoryType == "message") {
+            } else if (directoryType === "message") {
                 let topic = process.env.TEST_TOPIC;
                 if (!topic) {
                     throw new Error("No trigger topic configured");
@@ -85,15 +86,20 @@ const gcloud_strategy = {
 
         do_spawn('deploy.sh', [directory, func, bucket, trigger], (code) => {
             if (code === 0) {
-                fs.readFile(directory + '/deploy_url', "utf8", (err, deploy_url) => {
-                    if (err) {
-                        done(err);
-                    }
-                    if (deploy_url === "") {
-                        done(new Error("No deploy url found"));
-                    }
-                    done(null, deploy_url.trim());
-                });
+                if (directoryType === "http") {
+                    fs.readFile(directory + '/deploy_url', "utf8", (err, deploy_url) => {
+                        if (err) {
+                            done(err);
+                        }
+                        if (deploy_url === "") {
+                            done(new Error("No deploy url found"));
+                        } else {
+                            done(null, deploy_url.trim());
+                        }
+                    });
+                } else {
+                    done(null, "");
+                }
             }  else {
                 done(new Error("Deploy code: " + code));
             }
@@ -137,6 +143,37 @@ const gcloud_strategy = {
 
                 return messageId;
             });
+    },
+
+    messageClient: (callback) => {
+        // Instantiates a client
+        const pubsub = PubSub();
+
+        let topicName = process.env.REPLY_TOPIC;
+        if (!topicName) {
+            throw new Error("No reply topic configured for message services.");
+        }
+
+        // References an existing topic, e.g. "my-topic"
+        const topic = pubsub.topic(topicName);
+
+        let subscription;
+        topic.createSubscription("test-subscription", (err, sub) => {
+            if (err) {
+                expect(err).to.be.null;
+                return;
+            }
+
+            subscription = sub;
+
+            // Listen to and handle message and error events
+            subscription.on('message', callback);
+            subscription.on('error', (err) => {
+                expect(err).to.be.null;
+            });
+
+            console.log(`Listening to ${topicName} with subscription test-subscription`);
+        });
     }
 };
 
@@ -172,20 +209,21 @@ describe("It should run all integration tests for ", function() {
                     });
                 });
 
+                const createTests = require(tester);
+                let directoryType = getDirectoryType(__dirname, directory);
+
+                if (directoryType === "http") {
+                    createTests(it, superagent, expect, config);
+                } else if (directoryType === "message") {
+                    createTests(it, runnerStrategy.messageSender, runnerStrategy.messageClient, expect, config);
+                } else {
+                    throw new Error("Unknown directory type " + directoryType);
+                }
+
                 after((done) => {
                     runnerStrategy.undeploy(func, done);
                 });
 
-                const createTests = require(tester);
-                let directoryType = getDirectoryType(__dirname, directory);
-
-                if (directoryType == "http") {
-                    createTests(it, superagent, expect, config);
-                } else if (directoryType == "message") {
-                    createTests(it, runnerStrategy.messageSender, expect, config);
-                } else {
-                    throw new Error("Unknown directory type " + directoryType);
-                }
             })
         }
     });

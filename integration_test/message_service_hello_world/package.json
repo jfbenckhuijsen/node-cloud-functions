@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
+    "@google-cloud/pubsub": "^0.14.8",
     "cloud-servant": "git+https://github.com/jfbenckhuijsen/node-cloud-functions.git"
   }
 }
