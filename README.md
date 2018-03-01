@@ -251,6 +251,54 @@ object is automatically wrapped in a `Joi.object().keys()` for validation:
 
 > Note: in case schema is not specified, no validation is performed of the request body.
 
+#### Caching headers
+
+Caching headers supports the declarative definition of the caching headers which need to be send. It is based on the 
+best practices as outlined by [Google](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching).
+
+Configuration of the cache for an endpoint can be defined using the decision tree outlined on the google page:
+```js
+
+// Service configuration
+module.exports = CloudServant.restServiceModule({
+    name: 'cache-example',
+    debug: true,
+    paths: [
+        {
+            path: '/',
+            method: 'GET',
+            handler: () => {
+                
+            },
+            cacheHeaders: {
+                notReusable: true,
+                reusable: {
+                    revalidate: true/false,
+                    intermediate: true/false,
+                    maxAge: "",
+                    etag: (response) => etagstring
+                    stale: {
+                        
+                    }
+                }
+            }
+        }
+    ]
+});
+``` 
+
+Explanation of each of the configuration options:
+
+| Option | Explanation |
+|--------|-------------|
+| notReusable | The response is not reusable. This is also the default in case no configuration option is specified. This option excludes "reusable" |
+| reusable | The respons is reusable. This option excludes notReusable. |
+| - revalidate | Whether the request must be revalidated each time. Defaults to false if not specified. |
+| - intermediate |  Whether the response may be cacheable by intermediates. Defaults to false if not specified. |
+| - maxAge | The maximum age of the response. This can be specified as either a number (implying seconds) or a string, e.g. "1h" meaning 1 hour |
+| - etag | 
+
+
 #### Authentication
 
 Authentication is based on [Passport](http://passportjs.org/). To configure authentication, the following steps are required:
@@ -322,3 +370,59 @@ module.exports = CloudServant.messageModule({
     }
 });
 ```
+
+# Service Provider Interface
+
+Extending CloudServant is based on an SPI approach. This section describe the SPI interface.
+
+## SPI For REST Services
+
+An SPI is defined by a module which exports a single function:
+
+```js
+module.exports = {
+    name: "", // Name of the plugin, only used for logging purposes.
+    priority: 0, // Integer value representing the order in which SPI plugins are called upon startup.
+    handler: (restpath, pathDefinition, options)  => {
+        // Uses pathDefinition and options to update restpath.
+    
+        // pathDefinition is the a single section in the paths[] array in the main restService definition.
+        // options is the full options object, which can be used to find global options.
+    
+        // An SPI plugin reads the pathDefiniton and the options and updates the restpath object where needed.
+    
+        // restpath is structured as follows:
+        restpath = {
+            definition: {
+                method: [], // Array of HTTP methods the path responds to
+                path: "", // Path of the rest call
+                requestHandler: (LOGGER, req, res) => {}, // Request handler invoked if this path matches 
+            
+                use : [], // Array of Connect middleware fired before calling the request handler
+                schema: pathDef.schema // Schema of the input of the path, for validation
+            },
+            
+            // Internal usage for mathcing the path      
+            params: [], // Array with names of the parameters
+            pathRegexp : RegExp // Regular expression to match the path.
+        }
+    }
+}
+```
+
+The normal operation for a SPI Plugin is to e.g. alter the respath.definition.use array to add middleware which alters 
+the flow of the request processing. 
+
+// TODO:
+- schema als plugin?
+
+Currently implemented plugins are:
+| Plugin | Priority | Description |
+|--------|----------|-------------|
+| CORS   | 10       | CORS Plugin |
+| Authorization | 20 | Authorization plugin based on Passport |
+| Schema validation | 50 | Validates the input of the body |
+| Caching | 80 | Provides HTTP headers for client-side caching of responses | 
+| Default error | 100 | Provides a default error handler in case all other error handlers fail |
+ 
+## SPI For Message Services
