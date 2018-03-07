@@ -8,8 +8,7 @@ chai.use(sinonChai);
 const expect     = chai.expect;
 const status     = require('http-status');
 
-const Boom       = require('Boom');
-const Joi        = require('Joi');
+const Boom       = require('boom');
 
 describe("Requester", () => {
 
