@@ -271,15 +271,22 @@ module.exports = CloudServant.restServiceModule({
                 
             },
             cacheHeaders: {
-                notReusable: true,
-                reusable: {
+                cacheable: false / {
                     revalidate: true/false,
-                    intermediate: true/false,
                     maxAge: "",
+                    stale : false / {
+                        whileRevalidate: true/false,
+                        ifError: true/false
+                    },
+                    sharedCaches: false / true / {
+                        maxAge: "",
+                        revalidate: true/false,
+                        noTransform: true/false
+                    },
                     etag: (response) => etagstring
-                    stale: {
-                        
-                    }
+                },
+                raw: {
+                    // Raw express-cache-controller configuration 
                 }
             }
         }
@@ -291,13 +298,23 @@ Explanation of each of the configuration options:
 
 | Option | Explanation |
 |--------|-------------|
-| notReusable | The response is not reusable. This is also the default in case no configuration option is specified. This option excludes "reusable" |
-| reusable | The respons is reusable. This option excludes notReusable. |
-| - revalidate | Whether the request must be revalidated each time. Defaults to false if not specified. |
-| - intermediate |  Whether the response may be cacheable by intermediates. Defaults to false if not specified. |
+| cachable | false: The response is not reusable. This is also the default in case no configuration option is specified. The data is cachable in case a configuration is specified |
+| - revalidate | Whether the client must revalidate each cache entry before serving it. If true, the stale setting has no effect. |
 | - maxAge | The maximum age of the response. This can be specified as either a number (implying seconds) or a string, e.g. "1h" meaning 1 hour |
-| - etag | 
+| - stale | Whether to allow stale data.  |
+| - stale/whileRevalidate | Serve stale content from cache while revalidating |
+| - stale/ifError | Serve stale content from cache on error responses |
+| - sharedCaches |  Whether the response may be cacheable by intermediates. Defaults to false if not specified. |
+| - sharedCaches/maxAge | Same as maxAge but overrides this setting for shared caches/proxies.  |
+| - sharedCaches/revalidate | Same as revalidate but overrides this setting for shared caches/proxies.  |
+| - sharedCaches/noTransform | Shared caches/proxies may or may not transform the content. Defaults to false  |
+| - etag | |
+| raw | If the above configuration is not sufficient, the raw configuration allows to setup the internally used framework configuration directly |
 
+
+Cache header sending is based on [express-cache-controller](https://www.npmjs.com/package/express-cache-controller). The configuration
+settings above merely act as a conventient way to configure it. Time duration parsing is handled using [parse-duration](https://www.npmjs.com/package/parse-duration)
+so any string accepted by this framework can be used as maxAge.
 
 #### Authentication
 
@@ -399,13 +416,18 @@ module.exports = {
                 requestHandler: (LOGGER, req, res) => {}, // Request handler invoked if this path matches 
             
                 use : [], // Array of Connect middleware fired before calling the request handler
-                schema: pathDef.schema // Schema of the input of the path, for validation
             },
             
             // Internal usage for mathcing the path      
             params: [], // Array with names of the parameters
             pathRegexp : RegExp // Regular expression to match the path.
         }
+        
+        /*
+            restpath has the following methods:
+            - prependMiddleware(func): add connect-compatible middleware at the start
+            - appendMiddleware(func): add connect-compatible middleware at the end
+         */
     }
 }
 ```
@@ -413,10 +435,8 @@ module.exports = {
 The normal operation for a SPI Plugin is to e.g. alter the respath.definition.use array to add middleware which alters 
 the flow of the request processing. 
 
-// TODO:
-- schema als plugin?
-
 Currently implemented plugins are:
+
 | Plugin | Priority | Description |
 |--------|----------|-------------|
 | CORS   | 10       | CORS Plugin |
