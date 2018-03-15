@@ -282,8 +282,7 @@ module.exports = CloudServant.restServiceModule({
                         maxAge: "",
                         revalidate: true/false,
                         noTransform: true/false
-                    },
-                    etag: (response) => etagstring
+                    }
                 },
                 raw: {
                     // Raw express-cache-controller configuration 
@@ -308,13 +307,16 @@ Explanation of each of the configuration options:
 | - sharedCaches/maxAge | Same as maxAge but overrides this setting for shared caches/proxies.  |
 | - sharedCaches/revalidate | Same as revalidate but overrides this setting for shared caches/proxies.  |
 | - sharedCaches/noTransform | Shared caches/proxies may or may not transform the content. Defaults to false  |
-| - etag | |
 | raw | If the above configuration is not sufficient, the raw configuration allows to setup the internally used framework configuration directly |
 
 
 Cache header sending is based on [express-cache-controller](https://www.npmjs.com/package/express-cache-controller). The configuration
 settings above merely act as a conventient way to configure it. Time duration parsing is handled using [parse-duration](https://www.npmjs.com/package/parse-duration)
 so any string accepted by this framework can be used as maxAge.
+
+##### E-Tag support
+
+Reservered for a future version.
 
 #### Authentication
 
@@ -446,3 +448,5 @@ Currently implemented plugins are:
 | Default error | 100 | Provides a default error handler in case all other error handlers fail |
  
 ## SPI For Message Services
+
+Not supported yet...
