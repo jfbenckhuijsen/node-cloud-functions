@@ -1,6 +1,7 @@
 "use strict";
 
 const CloudServant = require('cloud-servant')(__dirname + '/config.json', '');
+const Joi = require('joi');
 
 module.exports = CloudServant.restServiceModule({
     name: 'http-service-validate-schema',
