@@ -5,9 +5,7 @@ const status        = require('http-status');
 module.exports = (it, superagent, expect, config) => {
 
     it("--> should perform a call caching headers", (done) => {
-        superagent.post(config.deploy_url + '/path1')
-            .send({ userName: 'a@b.com'})
-            .set('Content-Type', 'application/json')
+        superagent.get(config.deploy_url + '/path1')
             .end((err, res) => {
                 console.log("Called path1 GET");
 
