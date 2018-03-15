@@ -10,6 +10,7 @@ module.exports = CloudServant.restServiceModule({
             path: "/path1",
             cacheHeaders: {
                 cacheable: {
+                    revalidate: false,
                     maxAge: "5min",
                     sharedCaches: true
                 }
