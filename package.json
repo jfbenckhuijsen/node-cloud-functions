@@ -20,7 +20,8 @@
     "url": "https://github.com/jfbenckhuijsen/node-cloud-functions.git"
   },
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha test",
+    "release": "generate-release"
   },
   "dependencies": {
     "@google-cloud/datastore": "^1.0.3",
@@ -42,6 +43,7 @@
   "devDependencies": {
     "base-64": "^0.1.0",
     "chai": "^3.5.0",
+    "generate-release": "^0.14.0",
     "mocha": "^3.2.0",
     "passport-http": "^0.3.0",
     "sinon": "^1.17.6",
