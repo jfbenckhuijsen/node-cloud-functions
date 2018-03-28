@@ -1,0 +1,9 @@
+{
+  "name": "cloud-functions-service-validate-schema",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "joi": "^8.0.5",
+    "cloud-servant": "git+https://github.com/jfbenckhuijsen/node-cloud-functions.git"
+  }
+}
