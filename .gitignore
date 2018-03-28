@@ -2,3 +2,4 @@
 deploy_result.log
 deploy_url
 node_modules
+.idea/*.xml
