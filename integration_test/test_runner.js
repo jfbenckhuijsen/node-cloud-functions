@@ -14,12 +14,6 @@
  * a default project needs to be seleced using `gcloud config set project`.
  */
 
-const superagent    = require('superagent');
-const PubSub        = require('@google-cloud/pubsub');
-const chai          = require('chai');
-const expect        = chai.expect;
-const fs            = require('fs');
-const path          = require('path');
 const spawn          = require('child_process').spawn;
 
 function do_spawn(script, args, callback) {
@@ -39,22 +33,6 @@ function do_spawn(script, args, callback) {
     });
 
     return child;
-}
-
-function getDirectories (srcpath) {
-    console.log("Searching directories in " + srcpath);
-    return fs.readdirSync(srcpath)
-        .filter(file => {
-            let is_dir = fs.lstatSync(path.join(srcpath, file)).isDirectory();
-            console.log("Checking file " + file + " -> " + is_dir);
-            return is_dir;
-        })
-}
-
-function getDirectoryType(srcpath, directory) {
-    let subdir = directory.substring(srcpath.length + 1);
-    let underscore = subdir.indexOf("_");
-    return subdir.substring(0, underscore);
 }
 
 const gcloud_strategy = {
