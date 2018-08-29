@@ -27,7 +27,7 @@ This framework provides the following features:
 - Definition of service modules
 - Definition of message modules
 - Abstraction of default databases provided by the Cloud provider
-- Module configuration based on [Confluence](https://github.com/hapijs/confidence)
+- Module configuration based on [Confidence](https://github.com/hapijs/confidence)
 - Often used features for REST based services.
 
 ## Service Definition
