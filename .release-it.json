@@ -3,7 +3,7 @@
     "release": true
   },
   "hooks": {
-    "before:init": ["npm run lint", "npm test"],
+    "before:init": ["npm test"],
     "after:bump": "npm run build",
   }
 }
