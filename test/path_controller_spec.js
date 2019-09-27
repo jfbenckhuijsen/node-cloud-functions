@@ -605,26 +605,26 @@ describe('Path controller', () => {
                     {
                         method: 'GET',
                         path: '/user/cors',
-                        requestHandler: (req, res) => {
+                        requestHandler: () => {
                         }
                     },
                     {
                         method: 'GET',
                         path: '/user/cors/uniquemethod',
-                        requestHandler: (req, res) => {
+                        requestHandler: () => {
                         }
                     },
                     {
                         method: 'POST',
                         path: '/user/cors/uniquemethod',
-                        requestHandler: (req, res) => {
+                        requestHandler: () => {
                         }
                     },
                     {
                         method: 'GET',
                         path: '/user/noncors/uniquemethod',
                         cors: false,
-                        requestHandler: (req, res) => {
+                        requestHandler: () => {
                         }
                     }
                 ]
