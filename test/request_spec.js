@@ -8,7 +8,7 @@ chai.use(sinonChai);
 const expect     = chai.expect;
 const status     = require('http-status');
 
-const Boom       = require('boom');
+const Boom       = require('@hapi/boom');
 
 describe("Requester", () => {
 
