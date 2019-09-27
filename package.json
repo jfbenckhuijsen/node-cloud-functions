@@ -43,9 +43,9 @@
   "devDependencies": {
     "base-64": "^0.1.0",
     "chai": "^4.2.0",
-    "generate-release": "^1.1.1",
     "mocha": "^6.2.0",
     "passport-http": "^0.3.0",
+    "release-it": "^12.4.1",
     "sinon": "^7.5.0",
     "sinon-chai": "^3.3.0",
     "superagent": "^5.1.0"
