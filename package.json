@@ -46,6 +46,7 @@
     "eslint": "^6.4.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
+    "generate-release": "^1.1.1",
     "mocha": "^6.2.0",
     "passport-http": "^0.3.0",
     "release-it": "^12.4.1",
