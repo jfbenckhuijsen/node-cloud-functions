@@ -9,7 +9,7 @@ const BasicStrategy = require('passport-http').BasicStrategy;
 const base64        = require('base-64');
 const DebugLogger   = require('../lib/debug');
 const status        = require('http-status');
-const Joi           = require('@hapi/joi');
+const Joi           = require('joi');
 const DefaultError  = require('../lib/spi_plugins/default_errror');
 
 chai.use(sinonChai);
