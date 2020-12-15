@@ -27,7 +27,7 @@
     "@google-cloud/datastore": "^5.1.0",
     "@google-cloud/pubsub": "^2.7.0",
     "@hapi/boom": "^9.1.0",
-    "@hapi/joi": "^17.1.1",
+    "joi": "^17.1.1",
     "argparse": "^2.0.1",
     "chalk": "^4.1.0",
     "confidence": "^5.0.0",
