@@ -21,6 +21,14 @@ Functions.
 The framework is inspired feature-wise by [Hapi.js](https://hapijs.com/), so you'll see quite some of
 the internal frameworks of Hapi being used.
 
+## Changes
+
+### 1.3.4
+
+* Changed order and handling of SPI Plugin middleware (see below for new order)
+* Allow inserting middleware with a priority.
+* Updated dependency versions
+
 ## General Features
 
 This framework provides the following features:
@@ -210,8 +218,28 @@ Given the extended configuration needed and the fact that this type of middlewar
 CloudServant has support for the following standard middleware:
 * CORS using [Node cors](https://github.com/expressjs/cors).
 * Authentication using [Passport](http://passportjs.org/)
+* Schema validation using [@hapi/joi](https://www.npmjs.com/package/@hapi/joi)
+* Caching using [express-cache-controller](https://www.npmjs.com/package/express-cache-controller)
 
 > Note: Not all available middleware has been tested, so you may run into bugs. In this case, feel free to file a bug.
+
+If you want to specify the priority of your middleware amongst the standard middleware, add the middleware using the
+priority approach:
+
+```javascript
+
+{
+  use: [
+    {
+      priority: 500,
+      middleware: (req, res, next) => {}
+    }
+  ]
+}
+```
+
+Middlware without priority is added starting at priority 500.
+
 
 #### CORS Support
 
@@ -429,6 +457,7 @@ module.exports = {
             restpath has the following methods:
             - prependMiddleware(func): add connect-compatible middleware at the start
             - appendMiddleware(func): add connect-compatible middleware at the end
+            - insertMiddleware(func, priority): add connect-compatible middleware at the given priority
          */
     }
 }
@@ -441,11 +470,11 @@ Currently implemented plugins are:
 
 | Plugin | Priority | Description |
 |--------|----------|-------------|
-| CORS   | 10       | CORS Plugin |
-| Authorization | 20 | Authorization plugin based on Passport |
-| Schema validation | 50 | Validates the input of the body |
-| Caching | 80 | Provides HTTP headers for client-side caching of responses | 
-| Default error | 100 | Provides a default error handler in case all other error handlers fail |
+| CORS   | 100       | CORS Plugin |
+| Authorization | 200 | Authorization plugin based on Passport |
+| Schema validation | 500 | Validates the input of the body |
+| Caching | 400 | Provides HTTP headers for client-side caching of responses | 
+| Default error | 1000 | Provides a default error handler in case all other error handlers fail |
  
 ## SPI For Message Services
 
