@@ -1,7 +1,5 @@
 {
-  "platform" : "GCF",
-  "googleDatastore" : {
-
+  "platform": "GCF",
+  "googleDatastore": {
   }
-
 }
