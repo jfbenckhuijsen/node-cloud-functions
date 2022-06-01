@@ -1,9 +1,6 @@
-'use strict';
-
-module.exports = (it, superagent, expect, config) => {
-
+module.exports = (it, expect, config) => {
   it('--> should perform a call caching headers', (done) => {
-    superagent.get(config.deploy_url + '/path1')
+    config.superagent.get(`${config.deploy_url}/path1`)
       .end((err, res) => {
         console.log('Called path1 GET');
 
@@ -22,5 +19,4 @@ module.exports = (it, superagent, expect, config) => {
         done();
       });
   });
-
 };

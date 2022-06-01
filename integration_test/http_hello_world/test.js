@@ -1,11 +1,8 @@
-'use strict';
-
-module.exports = (it, superagent, expect, config) => {
-
+module.exports = (it, expect, config) => {
   it('--> should perform a basic hello world call', (done) => {
-    console.log('Calling: ' + config.deploy_url);
+    console.log(`Calling: ${config.deploy_url}`);
 
-    superagent.post(config.deploy_url)
+    config.superagent.post(config.deploy_url)
       .send({ name: 'Functions' })
       .set('Content-Type', 'application/json')
       .end((err, res) => {

@@ -1,5 +1,3 @@
-'use strict';
-
 const CloudServant = require('cloud-servant')(__dirname + '/config.json', '');
 
 module.exports = CloudServant.restServiceModule({

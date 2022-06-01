@@ -1,26 +1,23 @@
-'use strict';
-
-const CloudServant = require('cloud-servant')(__dirname + '/config.json', '');
+const CloudServant = require('cloud-servant')(`${__dirname}/config.json`, '');
 const passport = require('passport');
-const BasicStrategy = require('passport-http').BasicStrategy;
+const { BasicStrategy } = require('passport-http');
 
 passport.use(new BasicStrategy(
-  function (username, password, done) {
+  ((username, password, done) => {
     if (username === 'admin' && password === 'welcome') {
       return done(null, {
-        user: 'admin'
+        user: 'admin',
       });
-    } else {
-      return done(null, false);
     }
-  }
+    return done(null, false);
+  }),
 ));
 
-passport.serializeUser(function (user, done) {
+passport.serializeUser((user, done) => {
   done(null, user);
 });
 
-passport.deserializeUser(function (user, done) {
+passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
@@ -29,7 +26,7 @@ module.exports = CloudServant.restServiceModule({
   cors: false,
   debug: true,
   authStrategies: {
-    default: passport.authenticate('basic', { session: false })
+    default: passport.authenticate('basic', { session: false }),
   },
   paths: [
     {
@@ -38,7 +35,7 @@ module.exports = CloudServant.restServiceModule({
       auth: true,
       handler: (_LOGGER, req, res) => {
         res.send(`Hello ${req.body.name || 'World'}!`);
-      }
-    }
-  ]
+      },
+    },
+  ],
 });

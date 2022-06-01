@@ -1,15 +1,11 @@
-'use strict';
-
 const base64 = require('base-64');
-const status = require('http-status');
 
-module.exports = (it, superagent, expect, config) => {
-
+module.exports = (it, expect, config) => {
   it('--> should perform an authenticated call', (done) => {
-    superagent.post(config.deploy_url)
+    config.superagent.post(config.deploy_url)
       .send({ name: 'Functions' })
       .set('Content-Type', 'application/json')
-      .set('Authorization', 'Basic ' + base64.encode('admin:welcome'))
+      .set('Authorization', `Basic ${base64.encode('admin:welcome')}`)
       .end((err, res) => {
         console.log('Called authenticated request');
 
@@ -27,17 +23,13 @@ module.exports = (it, superagent, expect, config) => {
   });
 
   it('--> should perform an invalid authenticated call', (done) => {
-    superagent.post(config.deploy_url)
+    config.superagent.post(config.deploy_url)
       .send({ name: 'Functions' })
       .set('Content-Type', 'application/json')
-      .set('Authorization', 'Basic ' + base64.encode('admin:notwelcome'))
-      .end((err, res) => {
+      .set('Authorization', `Basic ${base64.encode('admin:notwelcome')}`)
+      .end((_err, res) => {
         console.log('Called request with invalid credentials');
 
-        expect(err).to.not.be.null;
-        expect(err.status)
-          .to
-          .equal(status.UNAUTHORIZED);
         expect(res.unauthorized)
           .to
           .equal(true);

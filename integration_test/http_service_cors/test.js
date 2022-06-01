@@ -1,9 +1,6 @@
-'use strict';
-
-module.exports = (it, superagent, expect, config) => {
-
+module.exports = (it, expect, config) => {
   it('--> should perform a CORS call', (done) => {
-    superagent.options(config.deploy_url)
+    config.superagent.options(config.deploy_url)
       .set('Origin', 'http://www.example.com')
       .set('Access-Control-Request-Method', 'POST')
       .set('Access-Control-Request-Headers', 'Content-Type, OTHER_HEADER')
@@ -25,7 +22,7 @@ module.exports = (it, superagent, expect, config) => {
           .to
           .equal('Content-Type, OTHER_HEADER');
 
-        superagent.post(config.deploy_url)
+        config.superagent.post(config.deploy_url)
           .send({ name: 'Functions' })
           .set('Origin', 'http://www.example.com')
           .set('Content-Type', 'application/json')
@@ -51,5 +48,4 @@ module.exports = (it, superagent, expect, config) => {
           });
       });
   });
-
 };

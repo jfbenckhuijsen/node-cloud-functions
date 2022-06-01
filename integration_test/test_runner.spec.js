@@ -57,7 +57,11 @@ function getDirectoryType(srcpath, directory) {
   return subdir.substring(0, underscore);
 }
 
-const gcloudStrategy = {
+const gcloudStrategy = () => new {
+  init: () => {},
+
+  deinit: () => {},
+
   deploy: (directory, func, done) => {
     const directoryType = getDirectoryType(__dirname, directory);
 
@@ -92,7 +96,7 @@ const gcloudStrategy = {
             if (deployUrl === '') {
               done(new Error('No deploy url found'));
             } else {
-              done(null, deployUrl.trim());
+              done(null, deployUrl.trim(), superagent);
             }
           });
         } else {
@@ -173,40 +177,114 @@ const gcloudStrategy = {
       console.log(`Listening to ${topicName} with subscription test-subscription`);
     });
   },
-};
+}();
 
-const emulatorStrategy = {};
+const emulatorStrategy = () => ({
+  functionTesting: undefined,
+  supertest: undefined,
+  datastoreContainer: undefined,
+
+  init: () => {
+    // eslint-disable-next-line global-require
+    this.functionTesting = require('@google-cloud/functions-framework/testing');
+    // eslint-disable-next-line global-require
+    this.supertest = require('supertest');
+  },
+
+  deinit: () => {},
+
+  beforeAll: async (done) => {
+    // eslint-disable-next-line global-require
+    const { GenericContainer } = require('testcontainers');
+
+    this.datastoreContainer = await new GenericContainer('singularities/datastore-emulator')
+      .withEnv('DATASTORE_PROJECT_ID', 'project-test')
+      .withEnv('DATASTORE_LISTEN_ADDRESS', 'localhost:9435')
+      .withExposedPorts(9435)
+      .start();
+
+    process.env.DATASTORE_EMULATOR_HOST = `localhost:${this.datastoreContainer.getMappedPort(9435)}`;
+    process.env.DATASTORE_PROJECT_ID = 'project-test';
+
+    done();
+  },
+
+  afterAll: async (done) => {
+    await this.datastoreContainer.stop();
+    done();
+  },
+
+  deploy: (directory, func, done) => {
+    doSpawn('setup_npm_link.sh', [__dirname, '..'], () => {
+      doSpawn('setup_npm_link.sh', [__dirname, directory, 'cloud-servant'], () => {
+        // eslint-disable-next-line global-require
+        require(directory);
+        const server = this.functionTesting.getTestServer(func);
+        console.log(`Server started on ${server.address()}`);
+        done(null, '', this.supertest(server));
+      });
+    });
+  },
+
+  undeploy: (func, done) => {
+    done();
+  },
+
+  messageSender: (message) => {
+
+  },
+
+  messageClient: (callback) => {
+
+  },
+});
 
 describe('It should run all integration tests for ', function () {
   this.timeout(200000);
+
+  const runnerStrategy = emulatorStrategy(); // TODO: Configurable
+  runnerStrategy.init();
+
+  before(async (done) => {
+    if (runnerStrategy.beforeAll) {
+      await runnerStrategy.beforeAll(done);
+    }
+  });
+
+  after(async (done) => {
+    if (runnerStrategy.afterAll) {
+      await runnerStrategy.afterAll(done);
+    }
+  });
 
   getDirectories(__dirname)
     .forEach((dirname) => {
       const directory = `${__dirname}/${dirname}`;
       const tester = `${directory}/test.js`;
       const func = dirname.replace(/_/g, '-');
-      const runnerStrategy = gcloudStrategy; // TODO: Configurable
 
       if (fs.existsSync(tester)) {
         describe(`all test in ${directory}:`, () => {
           const config = {};
 
           before((done) => {
-            runnerStrategy.deploy(directory, func, (err, deploy_url) => {
-              console.log(`Configured endpoint URL as :${deploy_url}`);
+            runnerStrategy.deploy(directory, func, (err, deployUrl, superagent) => {
+              console.log(`Configured endpoint URL as :${deployUrl}`);
 
-              config.deploy_url = deploy_url;
+              config.deploy_url = deployUrl;
+              config.superagent = superagent;
 
               console.log('*****************************************************************************');
               done(err);
             });
           });
 
+          // eslint-disable-next-line global-require,import/no-dynamic-require
           const createTests = require(tester);
           const directoryType = getDirectoryType(__dirname, directory);
 
           if (directoryType === 'http') {
-            createTests(it, superagent, expect, config);
+            createTests(it, expect, config);
           } else if (directoryType === 'message') {
             createTests(it, runnerStrategy.messageSender, runnerStrategy.messageClient, expect, config);
           } else {

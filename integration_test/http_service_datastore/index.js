@@ -1,50 +1,48 @@
-'use strict';
-
-const CloudServant = require('cloud-servant')(__dirname + '/config.json', '');
+const CloudServant = require('cloud-servant')(`${__dirname}/config.json`, '');
 const gstore = require('gstore-node');
-const Schema = gstore.Schema;
+
+const { Schema } = gstore;
 const passport = require('passport');
-const BasicStrategy = require('passport-http').BasicStrategy;
+const { BasicStrategy } = require('passport-http');
 const Joi = require('joi');
 const status = require('http-status');
 
 passport.use(new BasicStrategy(
-  function (username, password, done) {
-    if (username == 'admin' && password == 'welcome') {
+  (username, password, done) => {
+    if (username === 'admin' && password === 'welcome') {
       return done(null, {
-        user: 'admin'
+        user: 'admin',
       });
-    } else {
-      return done(null, false);
     }
-  }
+    return done(null, false);
+  },
 ));
 
-passport.serializeUser(function (user, done) {
+passport.serializeUser((user, done) => {
   done(null, user);
 });
 
-passport.deserializeUser(function (user, done) {
+passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
 const OrderSchema = new Schema({
   orderDate: {
     type: 'datetime',
-    required: true
+    required: true,
   },
   customerName: {
     type: 'string',
-    required: true
+    required: true,
   },
   deliveryAddress: {
     type: 'string',
-    required: true
+    required: true,
   },
   invoiceAddress: {
     type: 'string',
-    required: true
-  }
+    required: true,
+  },
 });
 const Order = CloudServant.db.gstore.model('Order', OrderSchema);
 
@@ -52,7 +50,7 @@ module.exports = CloudServant.restServiceModule({
   name: 'http-service-datastore',
   cors: true,
   authStrategies: {
-    default: passport.authenticate('basic', { session: false })
+    default: passport.authenticate('basic', { session: false }),
   },
   paths: [
     {
@@ -65,19 +63,19 @@ module.exports = CloudServant.restServiceModule({
         deliveryAddress: Joi.string()
           .required(),
         invoiceAddress: Joi.string()
-          .required()
+          .required(),
       },
       handler: (_LOGGER, req, res) => {
         new Order({
           orderDate: new Date(),
           customerName: req.body.customerName,
           deliveryAddress: req.body.deliveryAddress,
-          invoiceAddress: req.body.invoiceAddress
+          invoiceAddress: req.body.invoiceAddress,
         }).save()
           .then((aanmelding) => res.status(status.CREATED)
             .send(aanmelding.entityKey.id))
           .catch((err) => res.handle(err));
-      }
+      },
     },
     {
       method: 'PUT',
@@ -89,7 +87,7 @@ module.exports = CloudServant.restServiceModule({
         deliveryAddress: Joi.string()
           .required(),
         invoiceAddress: Joi.string()
-          .required()
+          .required(),
       },
       handler: (_LOGGER, req, res) => {
         console.log(req.params.id);
@@ -104,7 +102,7 @@ module.exports = CloudServant.restServiceModule({
               .catch((err) => res.handle(err));
           })
           .catch((err) => res.handle(err));
-      }
+      },
     },
     {
       method: 'GET',
@@ -112,9 +110,9 @@ module.exports = CloudServant.restServiceModule({
       auth: true,
       handler: (_LOGGER, req, res) => {
         Order.get(req.params.id)
-          .then(entity => res.handle(entity.plain()))
-          .catch(err => res.handle(err));
-      }
+          .then((entity) => res.handle(entity.plain()))
+          .catch((err) => res.handle(err));
+      },
     },
     {
       method: 'GET',
@@ -129,7 +127,7 @@ module.exports = CloudServant.restServiceModule({
         query.run()
           .then((response) => res.handle(response.entities))
           .catch((err) => res.handle(err));
-      }
+      },
     },
     {
       method: 'DELETE',
@@ -140,7 +138,7 @@ module.exports = CloudServant.restServiceModule({
           .then((response) => res.status(response.success ? status.NO_CONTENT : status.NOT_FOUND)
             .send())
           .catch((err) => res.handle(err));
-      }
-    }
-  ]
+      },
+    },
+  ],
 });

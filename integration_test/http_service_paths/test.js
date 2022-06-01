@@ -1,9 +1,6 @@
-'use strict';
-
-module.exports = (it, superagent, expect, config) => {
-
+module.exports = (it, expect, config) => {
   it('--> should perform a call to paths which differ by method', (done) => {
-    superagent.post(config.deploy_url + '/path1')
+    config.superagent.post(`${config.deploy_url}/path1`)
       .send({ name: 'Functions' })
       .set('Content-Type', 'application/json')
       .end((err, res) => {
@@ -23,7 +20,7 @@ module.exports = (it, superagent, expect, config) => {
   });
 
   it('--> should perform a call to paths which differ by path', (done) => {
-    superagent.post(config.deploy_url + '/path2')
+    config.superagent.post(`${config.deploy_url}/path2`)
       .send({ name: 'Functions' })
       .set('Content-Type', 'application/json')
       .end((err, res) => {
@@ -43,7 +40,7 @@ module.exports = (it, superagent, expect, config) => {
   });
 
   it('--> should perform a call to paths which has a parameter', (done) => {
-    superagent.post(config.deploy_url + '/parampath/Functions')
+    config.superagent.post(`${config.deploy_url}/parampath/Functions`)
       .send({ name: 'Functions' })
       .set('Content-Type', 'application/json')
       .end((err, res) => {
@@ -61,5 +58,4 @@ module.exports = (it, superagent, expect, config) => {
         done();
       });
   });
-
 };
