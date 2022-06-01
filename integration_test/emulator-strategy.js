@@ -56,6 +56,9 @@ module.exports = () => ({
         // eslint-disable-next-line global-require,import/no-dynamic-require
         require(directory);
         const server = functionTesting.getTestServer(func);
+        if (!server.address()) {
+          server.listen(0);
+        }
         const tester = supertest(server);
         console.log(`Server started on ${server.address()}`);
 

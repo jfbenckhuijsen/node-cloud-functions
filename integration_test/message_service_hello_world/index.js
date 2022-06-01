@@ -1,7 +1,7 @@
 const CloudServant = require('cloud-servant')(`${__dirname}/config.json`, '');
 const { PubSub } = require('@google-cloud/pubsub');
 
-const pubsub = PubSub({
+const pubsub = new PubSub({
   apiEndpoint: process.env.PUBSUB_HOST,
   projectId: process.env.PUBSUB_PROJECT_ID,
 });
