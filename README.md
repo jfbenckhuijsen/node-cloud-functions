@@ -25,6 +25,13 @@ the internal frameworks of Hapi being used.
 
 ## Changes
 
+### 1.4.0
+
+* Update of various dependencies
+* Added integration testing using emulators
+* CloudServant now exposes Joi via CloudServant.Joi, so no require is needed
+* 
+
 ### 1.3.4
 
 * Changed order and handling of SPI Plugin middleware (see below for new order)
