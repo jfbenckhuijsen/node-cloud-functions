@@ -64,7 +64,10 @@ describe('It should run all integration tests for ', function () {
         describe(`all test in ${directory}:`, () => {
           const directoryType = getDirectoryType(__dirname, directory);
 
-          const config = {};
+          const config = {
+            topic: func,
+            replyTopic: `${func}-reply`,
+          };
 
           before((done) => {
             runnerStrategy.deploy(directory, func, directoryType, (err, deployUrl, superagent) => {

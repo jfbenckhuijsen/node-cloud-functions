@@ -1,19 +1,20 @@
-module.exports = (it, messageSender, messageClient, expect, _config) => {
+module.exports = (it, messageSender, messageClient, expect, config) => {
   it('--> should perform a basic hello world call', (done) => {
     let reply;
-    messageClient((message) => {
+    messageClient(config.replyTopic, (message) => {
       console.log(`***** Received reply from topic: ${message.data}`);
       reply = `${message.data}`;
     });
 
-    messageSender(process.env.REPLY_TOPIC);
+    const message = config.replyTopic;
+    messageSender(config.topic, message);
 
     setTimeout(() => {
       console.log('***** Wait timeout reached, checking if reply has been received');
       expect(reply).to.not.be.null;
       expect(reply)
         .to
-        .equal(process.env.REPLY_TOPIC);
+        .equal(config.replyTopic);
       done();
     }, 10000);
   });
