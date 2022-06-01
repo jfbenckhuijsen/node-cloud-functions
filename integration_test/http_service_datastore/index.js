@@ -1,11 +1,11 @@
 const CloudServant = require('cloud-servant')(`${__dirname}/config.json`, '');
-const gstore = require('gstore-node');
 
-const { Schema } = gstore;
 const passport = require('passport');
-const { BasicStrategy } = require('passport-http');
-const Joi = require('joi');
 const status = require('http-status');
+const { BasicStrategy } = require('passport-http');
+
+const { Schema } = CloudServant.db.gstore;
+const { Joi } = CloudServant;
 
 passport.use(new BasicStrategy(
   (username, password, done) => {
@@ -28,7 +28,7 @@ passport.deserializeUser((user, done) => {
 
 const OrderSchema = new Schema({
   orderDate: {
-    type: 'datetime',
+    type: 'date',
     required: true,
   },
   customerName: {
@@ -97,7 +97,7 @@ module.exports = CloudServant.restServiceModule({
             order.deliveryAddress = req.body.deliveryAddress;
             order.invoiceAddress = req.body.invoiceAddress;
             order.save()
-              .then((order) => res.status(status.OK)
+              .then(() => res.status(status.OK)
                 .end())
               .catch((err) => res.handle(err));
           })

@@ -3,12 +3,9 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
-    "@google-cloud/datastore": "^6.6.2",
     "cloud-servant": "git+https://github.com/jfbenckhuijsen/node-cloud-functions.git",
-    "http-status": "^1.0.1",
-    "joi": "^17.6.0",
+    "http-status": "^1.5.2",
     "passport": "^0.6.0",
-    "passport-http": "^0.3.0",
-    "gstore-node": "^8.0.0"
+    "passport-http": "^0.3.0"
   }
 }

@@ -1,7 +1,6 @@
-'use strict';
+const CloudServant = require('cloud-servant')(`${__dirname}/config.json`, '');
 
-const CloudServant = require('cloud-servant')(__dirname + '/config.json', '');
-const Joi = require('joi');
+const { Joi } = CloudServant;
 
 module.exports = CloudServant.restServiceModule({
   name: 'http-service-validate-schema',
@@ -16,7 +15,7 @@ module.exports = CloudServant.restServiceModule({
       },
       handler: (_LOGGER, req, res) => {
         res.send(`PATH1 POST ${req.body.userName || 'World'}!`);
-      }
-    }
-  ]
+      },
+    },
+  ],
 });

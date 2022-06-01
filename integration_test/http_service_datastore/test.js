@@ -21,7 +21,7 @@ module.exports = (it, expect, config) => {
         console.log('Order created');
 
         const orderId = res.text;
-        expect(orderId).to.not.be.null();
+        expect(orderId).to.not.be.null;
         expect(orderId)
           .to
           .not
@@ -99,7 +99,7 @@ module.exports = (it, expect, config) => {
                       .set('Content-Type', 'application/json')
                       .set('Authorization', auth_header)
                       .end((err, res) => {
-                        expect(err).to.be.null();
+                        expect(err).to.be.null;
                         expect(res.ok)
                           .to
                           .equal(true);
