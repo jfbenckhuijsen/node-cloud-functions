@@ -89,8 +89,7 @@ describe('It should run all integration tests for ', function () {
           } else if (directoryType === 'message') {
             createTests(
               it,
-              runnerStrategy.messageSender,
-              runnerStrategy.messageClient,
+              runnerStrategy,
               expect,
               config,
             );
