@@ -10,12 +10,12 @@ module.exports = CloudServant.restServiceModule({
         cacheable: {
           revalidate: false,
           maxAge: '5min',
-          sharedCaches: true
-        }
+          sharedCaches: true,
+        },
       },
       handler: (_LOGGER, _req, res) => {
         res.send('PATH1 GET HELLO WORLD');
-      }
-    }
-  ]
+      },
+    },
+  ],
 });
