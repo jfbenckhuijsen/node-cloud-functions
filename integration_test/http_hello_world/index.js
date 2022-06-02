@@ -1,4 +1,4 @@
-const functions = require("@google-cloud/functions-framework")
+const functions = require('@google-cloud/functions-framework');
 
 /**
  * HTTP Cloud Function.
