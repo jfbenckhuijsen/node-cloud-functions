@@ -25,7 +25,7 @@ the internal frameworks of Hapi being used.
 
 ## Changes
 
-### 1.4.0
+### 1.7.0
 
 * Update of various dependencies
 * Added integration testing using emulators
