@@ -1,4 +1,4 @@
-const CloudServant = require('cloud-servant')(__dirname + '/config.json', '');
+const CloudServant = require('cloud-servant')(`${__dirname}/config.json`, '');
 
 module.exports = CloudServant.restServiceModule({
   name: 'http-service-hello-world',
@@ -8,7 +8,7 @@ module.exports = CloudServant.restServiceModule({
       path: '/',
       handler: (_LOGGER, req, res) => {
         res.send(`Hello ${req.body.name || 'World'}!`);
-      }
-    }
-  ]
+      },
+    },
+  ],
 });
