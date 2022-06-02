@@ -97,11 +97,12 @@ The CloudServant object has the following API:
 
 The format of the configuration file is as follows:
 
-| Field    | Explanation                                                                      |
-|----------|----------------------------------------------------------------------------------|
-| platform | Either "GCF", "Firebase" or "AWS" to run your module on Google Cloud Functions, Firebase or AWS Lambda |
-| googleDatastore | (GCF/Firebase Specific) Specifies the configuration for google data store and [gstore-node](https://github.com/sebelga/gstore-node)|
-|          |                                                                                  |
+| Field                     | Explanation                                                                                                                         |
+|---------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| platform                  | Either "GCF", "Firebase" or "AWS" to run your module on Google Cloud Functions, Firebase or AWS Lambda                              |
+| googleDatastore           | (GCF/Firebase Specific) Specifies the configuration for google data store and [gstore-node](https://github.com/sebelga/gstore-node) |
+| googleDatastore.datastore | Configure the Google Datastore connection. On GCloud this can be left empty                                                         |
+| googleDatastore.gstore    | Configure the GStore connection.                                                                                                    |
 
 #### Logging support
 
