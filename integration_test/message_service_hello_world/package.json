@@ -4,6 +4,6 @@
   "main": "index.js",
   "dependencies": {
     "@google-cloud/pubsub": "^2.19.4",
-    "cloud-servant": "git+https://github.com/jfbenckhuijsen/node-cloud-functions.git"
+    "cloud-servant": "git+https://github.com/jfbenckhuijsen/node-cloud-functions.git#develop"
   }
 }

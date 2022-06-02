@@ -3,6 +3,6 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
-    "cloud-servant": "git+https://github.com/jfbenckhuijsen/node-cloud-functions.git"
+    "cloud-servant": "git+https://github.com/jfbenckhuijsen/node-cloud-functions.git#develop"
   }
 }
