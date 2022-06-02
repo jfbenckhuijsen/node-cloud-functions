@@ -24,7 +24,7 @@ module.exports = () => {
 
       result.datastoreContainer = await new GenericContainer('google/cloud-sdk')
         .withEnv('DATASTORE_PROJECT_ID', project)
-        .withCmd(['gcloud', 'beta', 'emulators', 'datastore', 'start', '--no-store-on-disk', `--host-port=localhost:${datastorePort}`, `--project=${project}`, '--consistency=1.0'])
+        .withCmd(['gcloud', 'beta', 'emulators', 'datastore', 'start', '--no-store-on-disk', `--host-port=0.0.0.0:${datastorePort}`, `--project=${project}`, '--consistency=1.0'])
         .withExposedPorts(datastorePort)
         .start();
 
@@ -33,8 +33,12 @@ module.exports = () => {
         .withExposedPorts(pubsubPort)
         .start();
 
-      process.env.DATASTORE_EMULATOR_HOST = `localhost:${result.datastoreContainer.getMappedPort(datastorePort)}`;
+      const datastoreHost = `localhost:${result.datastoreContainer.getMappedPort(datastorePort)}`;
+      process.env.DATASTORE_EMULATOR_HOST = datastoreHost;
+      process.env.DATASTORE_DATASET = project;
       process.env.DATASTORE_PROJECT_ID = project;
+      process.env.DATASTORE_EMULATOR_HOST_PATH = `${datastoreHost}/datastore`;
+      process.env.DATASTORE_HOST = `http://${datastoreHost}`;
 
       const pubsubHost = `localhost:${result.pubsubContainer.getMappedPort(pubsubPort)}`;
       process.env.PUBSUB_HOST = pubsubHost;
@@ -68,7 +72,7 @@ module.exports = () => {
           console.log(`Server started on ${server.address()}`);
 
           const { port } = server.address();
-          const endpoint = `http://127.0.0.1:${port}`;
+          const endpoint = `host.docker.internal:${port}`;
 
           if (directoryType === 'message') {
             result.createEventSubscription(func, endpoint, project);
