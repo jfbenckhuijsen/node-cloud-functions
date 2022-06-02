@@ -20,14 +20,9 @@ module.exports = () => ({
       throw new Error(`Unknown directory type ${directoryType}`);
     }
 
-    const bucket = process.env.DEPLOY_BUCKET;
-    if (!bucket) {
-      throw new Error('No deployment bucket configured');
-    }
-
     const trigger = determineTrigger(directory);
 
-    spawn('deploy.sh', [directory, func, bucket, trigger], (code) => {
+    spawn('deploy.sh', [directory, func, trigger], (code) => {
       if (code === 0) {
         if (directoryType === 'http') {
           fs.readFile(`${directory}/deploy_url`, 'utf8', (err, deployUrl) => {

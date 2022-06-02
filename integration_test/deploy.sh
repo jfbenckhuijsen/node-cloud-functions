@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-echo "Deploying function $2 from directory $1. Trigger will be: $4 $5"
-echo "Using stage bucket $3 for deployment"
+echo "Deploying function $2 from directory $1. Trigger will be: $3 $4"
 
 cd $1
-gcloud alpha functions deploy $2 --stage-bucket $3 $4 $5 > deploy_result.log
+gcloud functions deploy $2 --runtime nodejs16 --allow-unauthenticated $3 $4 > deploy_result.log
 
 grep "  url" deploy_result.log | awk '{print $2}' > deploy_url
 
