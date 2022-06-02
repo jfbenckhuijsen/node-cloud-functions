@@ -10,7 +10,7 @@ module.exports = (apiEndpoint, projectId) => {
     const topic = pubsub.topic(topicName);
 
     // Create a publisher for the topic (which can include additional batching configuration)
-    const publisher = topic.publisher();
+    const { publisher } = topic;
 
     // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
     const dataBuffer = Buffer.from(message);
@@ -57,6 +57,7 @@ module.exports = (apiEndpoint, projectId) => {
     if (!topicExists) {
       await topic.create();
     }
+    console.log(`Creating subscription for topic ${topicName} on endpoint  ${endpoint}`);
     await topic.createSubscription(`${topicName}_subscription`, {
       pushEndpoint: `http://${endpoint}/projects/${project}/topics/${topicName}`,
     });
