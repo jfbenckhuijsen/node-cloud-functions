@@ -36,6 +36,7 @@
     "firebase-admin": "^10.2.0",
     "firebase-functions": "^3.13.0",
     "gstore-node": "^8.0.0",
+    "http-status": "^1.5.2",
     "joi": "^17.6.0",
     "parse-duration": "^1.0.2",
     "passport": "^0.6.0"
@@ -47,7 +48,6 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
     "generate-release": "^1.1.1",
-    "http-status": "^1.5.2",
     "mocha": "^10.0.0",
     "passport-http": "^0.3.0",
     "release-it": "^15.0.0",
