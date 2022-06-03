@@ -132,6 +132,10 @@ object is defined. The CloudServant object then has a field `db` as follows:
 }
 ```
 
+In case of a REST service, any error thrown by GStore can be passed to `res.handle(result, err)` and will
+be automatically converted to the appropriate HTTP error code (entity not found -> 404, validation errors to 400). If 
+needed you can of course also handle the errors yourself.
+
 ## Modules and Builder support
 
 CloudServant allows various types of modules to be created, each of which will be detailed in the following paragraphs.
