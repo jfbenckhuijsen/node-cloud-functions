@@ -17,7 +17,7 @@ const chai = require('chai');
 const { expect } = chai;
 const fs = require('fs');
 const path = require('path');
-const runnerStrategy = require('./emulator-strategy')(); // TODO: Configurable
+const runnerStrategy = require('./util/emulator-strategy')(); // TODO: Configurable
 
 runnerStrategy.init();
 
@@ -28,7 +28,7 @@ function getDirectories(srcpath) {
       const isDir = fs.lstatSync(path.join(srcpath, file))
         .isDirectory();
       console.log(`Checking file ${file} -> ${isDir}`);
-      return isDir;
+      return isDir && file !== 'util';
     });
 }
 
