@@ -14,8 +14,7 @@ module.exports = () => ({
       if (directoryType === 'http') {
         return '--trigger-http';
       } if (directoryType === 'message') {
-        const topic = func;
-        return `--trigger-topic ${topic}`;
+        return `--trigger-topic ${func}`;
       }
       throw new Error(`Unknown directory type ${directoryType}`);
     }
