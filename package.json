@@ -21,7 +21,7 @@
   },
   "scripts": {
     "test": "mocha --exit test",
-    "release": "generate-release"
+    "release": "npx release-it"
   },
   "dependencies": {
     "@google-cloud/datastore": "^6.6.2",
