@@ -19,7 +19,7 @@ module.exports = CloudServant.messageModule({
       const topic = pubsub.topic(event.stringData);
 
       // Create a publisher for the topic (which can include additional batching configuration)
-      const publisher = topic.publisher();
+      const { publisher } = topic;
 
       const dataBuffer = Buffer.from(event.stringData);
       publisher.publish(dataBuffer)
