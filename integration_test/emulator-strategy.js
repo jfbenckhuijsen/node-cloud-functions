@@ -3,6 +3,7 @@ const functionTesting = require('@google-cloud/functions-framework/testing');
 const supertest = require('supertest');
 const spawn = require('./spawner');
 const pubsub = require('./pubsub');
+const { expect } = require('chai');
 
 const project = 'project-test';
 
@@ -59,28 +60,32 @@ module.exports = () => {
       await result.pubsubContainer.stop();
     },
 
+    loadTestModule: async (directory, func, directoryType) => {
+      // eslint-disable-next-line global-require,import/no-dynamic-require
+      require(directory);
+      const server = functionTesting.getTestServer(func);
+      if (!server.address()) {
+        server.listen(0);
+      }
+      const tester = supertest(server);
+      console.log(`Server started on ${server.address()}`);
+
+      const { port } = server.address();
+      const endpoint = `host.docker.internal:${port}`;
+
+      if (directoryType === 'message') {
+        await result.createEventSubscription(func, endpoint, project);
+      }
+
+      return tester;
+    },
+
     deploy: (directory, func, directoryType, done) => {
-      spawn('setup_npm_link.sh', [__dirname, '..'], () => {
-        spawn('setup_npm_link.sh', [__dirname, directory, 'cloud-servant'], () => {
-          // eslint-disable-next-line global-require,import/no-dynamic-require
-          require(directory);
-          const server = functionTesting.getTestServer(func);
-          if (!server.address()) {
-            server.listen(0);
-          }
-          const tester = supertest(server);
-          console.log(`Server started on ${server.address()}`);
-
-          const { port } = server.address();
-          const endpoint = `host.docker.internal:${port}`;
-
-          if (directoryType === 'message') {
-            result.createEventSubscription(func, endpoint, project);
-          }
-
-          done(null, '', tester);
-        });
-      });
+      spawn('setup_npm_link.sh', [__dirname, '..'])
+        .then(() => spawn('setup_npm_link.sh', [__dirname, directory, 'cloud-servant']))
+        .then(() => result.loadTestModule(directory, func, directoryType))
+        .then((tester) => done(null, '', tester))
+        .catch((err) => done(new Error(`Failed to deploy test due to ${err}`)));
     },
 
     undeploy: (func, done) => {

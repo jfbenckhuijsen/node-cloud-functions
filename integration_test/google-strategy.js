@@ -22,8 +22,8 @@ module.exports = () => ({
 
     const trigger = determineTrigger(directory);
 
-    spawn('deploy.sh', [directory, func, trigger], (code) => {
-      if (code === 0) {
+    spawn('deploy.sh', [directory, func, trigger])
+      .then(() => {
         if (directoryType === 'http') {
           fs.readFile(`${directory}/deploy_url`, 'utf8', (err, deployUrl) => {
             if (err) {
@@ -38,20 +38,14 @@ module.exports = () => ({
         } else {
           done(null, '');
         }
-      } else {
-        done(new Error(`Deploy code: ${code}`));
-      }
-    });
+      })
+      .catch((code) => done(new Error(`Deploy code: ${code}`)));
   },
 
   undeploy: (func, done) => {
-    const child = spawn('undeploy.sh', [func], (code) => {
-      if (code === 0) {
-        done();
-      } else {
-        done(new Error(`Deploy code: ${code}`));
-      }
-    });
+    const child = spawn('undeploy.sh', [func])
+      .then(done)
+      .catch((code) => done(new Error(`Deploy code: ${code}`)));
 
     child.stdin.write('Y\n');
   },
