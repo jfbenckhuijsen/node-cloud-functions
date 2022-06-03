@@ -133,7 +133,7 @@ module.exports = CloudServant.restServiceModule({
       path: '/orders/{id}',
       auth: true,
       handler: (_LOGGER, req, res) => {
-        Order.delete(req.params.id)
+        Order.delete(parseInt(req.params.id, 10))
           .then((response) => res.status(response.success ? status.NO_CONTENT : status.NOT_FOUND)
             .send())
           .catch((err) => res.handle(null, err));
