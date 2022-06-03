@@ -1,7 +1,7 @@
 module.exports = (it, runnerStrategy, expect, config) => {
-  it('--> should perform a basic hello world call', (done) => {
+  it('--> should perform a basic hello world call', async (done) => {
     let reply;
-    runnerStrategy.messageClient(config.replyTopic, (message) => {
+    await runnerStrategy.messageClient(config.replyTopic, (message) => {
       console.log(`***** Received reply from topic: ${message.data}`);
       reply = `${message.data}`;
     });
