@@ -3,7 +3,7 @@ module.exports = (it, runnerStrategy, expect, config) => {
     let reply;
     await runnerStrategy.messageClient(config.replyTopic, (message) => {
       console.log(`***** Received reply from topic: ${message.data}`);
-      reply = `${message.data}`;
+      reply = message.data.toString();
     });
 
     const message = config.replyTopic;
