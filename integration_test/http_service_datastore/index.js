@@ -74,7 +74,7 @@ module.exports = CloudServant.restServiceModule({
         }).save()
           .then((aanmelding) => res.status(status.CREATED)
             .send(aanmelding.entityKey.id))
-          .catch((err) => res.handle(err));
+          .catch((err) => res.handle(null, err));
       },
     },
     {
@@ -90,18 +90,16 @@ module.exports = CloudServant.restServiceModule({
           .required(),
       },
       handler: (_LOGGER, req, res) => {
-        console.log(req.params.id);
-        Order.get(req.params.id)
+        console.log(`Order id = ${req.params.id}`);
+        Order.get(parseInt(req.params.id, 10))
           .then((order) => {
             order.customerName = req.body.customerName;
             order.deliveryAddress = req.body.deliveryAddress;
             order.invoiceAddress = req.body.invoiceAddress;
-            order.save()
-              .then(() => res.status(status.OK)
-                .end())
-              .catch((err) => res.handle(err));
+            return order.save();
           })
-          .catch((err) => res.handle(err));
+          .then(() => res.status(status.OK).end())
+          .catch((err) => res.handle(null, err));
       },
     },
     {
@@ -109,9 +107,10 @@ module.exports = CloudServant.restServiceModule({
       path: '/orders/{id}',
       auth: true,
       handler: (_LOGGER, req, res) => {
-        Order.get(req.params.id)
+        console.log(`Order id = ${req.params.id}`);
+        Order.get(parseInt(req.params.id, 10))
           .then((entity) => res.handle(entity.plain()))
-          .catch((err) => res.handle(err));
+          .catch((err) => res.handle(null, err));
       },
     },
     {
@@ -126,7 +125,7 @@ module.exports = CloudServant.restServiceModule({
 
         query.run()
           .then((response) => res.handle(response.entities))
-          .catch((err) => res.handle(err));
+          .catch((err) => res.handle(null, err));
       },
     },
     {
@@ -137,7 +136,7 @@ module.exports = CloudServant.restServiceModule({
         Order.delete(req.params.id)
           .then((response) => res.status(response.success ? status.NO_CONTENT : status.NOT_FOUND)
             .send())
-          .catch((err) => res.handle(err));
+          .catch((err) => res.handle(null, err));
       },
     },
   ],
