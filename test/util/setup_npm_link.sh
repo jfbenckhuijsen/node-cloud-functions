@@ -4,4 +4,4 @@ PWD=$(pwd)
 
 echo "Linking CloudServant in $2"
 
-cd  $1 && cd $2 && npm link $3 && cd $PWD || exit 1
+cd $1 && cd .. && cd $2 && npm link $3 && cd $PWD || exit 1
