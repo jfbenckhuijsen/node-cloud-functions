@@ -30,7 +30,7 @@ module.exports = () => {
         .start();
 
       result.pubsubContainer = await new GenericContainer('google/cloud-sdk')
-        .withCmd(['gcloud', 'beta', 'emulators', 'pubsub', 'start', `--project=${project}`])
+        .withCmd(['gcloud', 'beta', 'emulators', 'pubsub', 'start', `--project=${project}`, `--host-port=0.0.0.0:${pubsubPort}`])
         .withExposedPorts(pubsubPort)
         .start();
 
