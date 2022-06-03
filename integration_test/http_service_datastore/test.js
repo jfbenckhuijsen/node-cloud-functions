@@ -20,7 +20,7 @@ module.exports = (it, expect, config) => {
 
         console.log('Order created');
 
-        const orderId = res.text;
+        const orderId = parseInt(res.text, 10);
         expect(orderId).to.not.be.null;
         expect(orderId)
           .to
