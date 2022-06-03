@@ -3,7 +3,6 @@ const functionTesting = require('@google-cloud/functions-framework/testing');
 const supertest = require('supertest');
 const spawn = require('./spawner');
 const pubsub = require('./pubsub');
-const { expect } = require('chai');
 
 const project = 'project-test';
 
