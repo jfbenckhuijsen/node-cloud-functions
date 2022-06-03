@@ -32,23 +32,7 @@ module.exports = (apiEndpoint, projectId) => {
       await topic.create();
     }
 
-    let subscription;
-    await topic.createSubscription(`${topicName}-subscription`, (err, sub) => {
-      if (err) {
-        expect(err).to.be.null;
-        return;
-      }
-
-      subscription = sub;
-
-      // Listen to and handle message and error events
-      subscription.on('message', callback);
-      subscription.on('error', (err) => {
-        expect(err).to.be.null;
-      });
-
-      console.log(`Listening to ${topicName} with subscription test-subscription`);
-    });
+    return topic.createSubscription(`${topicName}-subscription`);
   };
 
   const createEventSubscription = async (topicName, endpoint, project) => {
