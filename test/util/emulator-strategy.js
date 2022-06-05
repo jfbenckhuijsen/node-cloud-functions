@@ -89,9 +89,8 @@ module.exports = () => {
     },
 
     undeploy: (directory, _func, done) => {
-      const fullDir = `${__dirname}/${directory}/node_modules`;
-      remove(fullDir);
-      done();
+      const nodeDir = `${directory}/node_modules`;
+      remove(nodeDir, done);
     },
 
     messageSender: undefined,
