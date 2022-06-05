@@ -1,18 +1,18 @@
-'use strict';
-
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
+
 chai.use(sinonChai);
 
-const expect = chai.expect;
+const { expect } = chai;
 const status = require('http-status');
 
 const Boom = require('@hapi/boom');
 
-describe('Requester', () => {
+const Request = require('../lib/request');
+const logger = require('../lib/logger/console')();
 
-  const Request = require('../lib/request');
+describe('Requester', () => {
 
   function doRequest(body, handler) {
     const res = {};
@@ -21,8 +21,8 @@ describe('Requester', () => {
       .returns(res);
     res.send = sinon.spy();
 
-    Request({
-      body: body
+    Request(logger, {
+      body,
     }, res, handler);
 
     return res;
@@ -90,9 +90,8 @@ describe('Requester', () => {
         .calledWith({
           error: 'Payment Required',
           message: 'I need some payment',
-          statusCode: status.PAYMENT_REQUIRED
+          statusCode: status.PAYMENT_REQUIRED,
         });
     });
   });
-
 });
