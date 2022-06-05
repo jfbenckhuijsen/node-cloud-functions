@@ -29,13 +29,13 @@ the internal frameworks of Hapi being used.
 
 * Logging for firebase via firebase functions
 * CloudServant.logger exposed
+* CloudServant.Boom exposed, so no require is needed.
 
 ### 1.7.0
 
 * Update of various dependencies
 * Added integration testing using emulators
 * CloudServant now exposes Joi via CloudServant.Joi, so no require is needed
-* 
 
 ### 1.3.4
 
