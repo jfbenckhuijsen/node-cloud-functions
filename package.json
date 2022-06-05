@@ -49,6 +49,7 @@
     "mocha": "^10.0.0",
     "passport-http": "^0.3.0",
     "release-it": "^15.0.0",
+    "remove": "^0.1.5",
     "sinon": "^14.0.0",
     "sinon-chai": "^3.7.0",
     "superagent": "^7.1.6",

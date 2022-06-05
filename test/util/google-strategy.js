@@ -41,7 +41,7 @@ module.exports = () => ({
       .catch((code) => done(new Error(`Deploy code: ${code}`)));
   },
 
-  undeploy: (func, done) => {
+  undeploy: (_directory, func, done) => {
     const child = spawn('undeploy.sh', [func])
       .then(done)
       .catch((code) => done(new Error(`Deploy code: ${code}`)));

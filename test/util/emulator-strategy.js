@@ -1,6 +1,7 @@
 const { GenericContainer } = require('testcontainers');
 const functionTesting = require('@google-cloud/functions-framework/testing');
 const supertest = require('supertest');
+const remove = require('remove');
 const spawn = require('./spawner');
 const pubsub = require('./pubsub');
 
@@ -87,7 +88,9 @@ module.exports = () => {
         .catch((err) => done(new Error(`Failed to deploy test due to ${err}`)));
     },
 
-    undeploy: (func, done) => {
+    undeploy: (directory, _func, done) => {
+      const fullDir = `${__dirname}/${directory}/node_modules`;
+      remove(fullDir);
       done();
     },
 

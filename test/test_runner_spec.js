@@ -98,7 +98,7 @@ describe('It should run all integration tests for ', function () {
           }
 
           after((done) => {
-            runnerStrategy.undeploy(func, done);
+            runnerStrategy.undeploy(directory, func, done);
           });
         });
       }
