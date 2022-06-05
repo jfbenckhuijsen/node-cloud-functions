@@ -25,6 +25,11 @@ the internal frameworks of Hapi being used.
 
 ## Changes
 
+### 1.8.0
+
+* Logging for firebase via firebase functions
+* CloudServant.logger exposed
+
 ### 1.7.0
 
 * Update of various dependencies
@@ -115,6 +120,8 @@ number of functions as fields, which support logging at various levels:
 | info   | Logs messages with info level severity, used for normal flows |
 | warning| Logs messages with warning level severity, used for strange but non-fatal application behavior |
 | error  | Logs messages with error level severity, used for application errors |
+
+The logging interface is also exposed via `CloudServant.logger`
 
 TODO:There is currently no way to limit the level of log messages which get passed thru.
 
