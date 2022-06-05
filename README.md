@@ -183,6 +183,8 @@ module.exports = CloudServant.restServiceModule({
   },
   auth: false,//'Boolean' or 'String': enables or disables global authentication. In case of a boolean, this refers to the default
   // authentication strategy. In case of a string, this refers to the name of the strategy.
+  enableFirebaseAuthentication: false, // 'Boolean'. When platform is Firebase, this enables validating the Firebase token as 
+  // 'default' authentication strategy. The existing default strategy will be overwritten.
   paths: [
   // Specification of the various paths
   {
