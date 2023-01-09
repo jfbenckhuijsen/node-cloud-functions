@@ -33,7 +33,7 @@
     "confidence": "^5.0.0",
     "cors": "^2.8.5",
     "express-cache-controller": "^1.1.0",
-    "firebase-admin": "^9.4.1",
+    "firebase-admin": "^11.4.1",
     "firebase-functions": "^3.13.0",
     "gstore-node": "^7.2.5",
     "http-status": "^1.5.0",
