@@ -49,7 +49,7 @@
     "generate-release": "^1.1.1",
     "mocha": "^8.2.1",
     "passport-http": "^0.3.0",
-    "release-it": "^14.2.2",
+    "release-it": "^15.6.0",
     "sinon": "^9.2.1",
     "sinon-chai": "^3.5.0",
     "superagent": "^6.1.0"
